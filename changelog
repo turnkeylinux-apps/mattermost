@@ -1,0 +1,164 @@
+turnkey-postgresql-14.1 (1) turnkey; urgency=low
+
+  * PostgreSQL:
+
+    - Latest Debian Jessie package version of PostgreSQL.
+    - Bugfixed lighttpd configuration [#552].
+
+  * Fix lighttpd bug in 15regen-sllcert [#512].
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Stefan Davis <nafets.sivad@gmail.com>  Thu, 28 Jan 2016 01:27:36 +1100
+
+turnkey-postgresql-14.0 (1) turnkey; urgency=low
+
+  * PostgreSQL:
+
+    - Latest Debian Jessie package version of PostgreSQL.
+    - Build error due to new postgis package [#377][#383].
+  
+  * Replaced PHPMyAdmin with Adminer
+  
+  * Hardened default SSL settings
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Ken Robinson <ken@robinsonshome.net>  Fri, 17 Jul 2015 06:02:00 -0400
+
+turnkey-postgresql-13.0 (1) turnkey; urgency=low
+
+  * PostgreSQL:
+
+    - Latest Debian Wheezy package version of PostgreSQL.
+    - Bugfix for package transition [#80].
+    - Removed hardcoded PGSQL version [#107], thanks Jenny Qian!
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Fri, 11 Oct 2013 10:54:09 +0300
+
+turnkey-postgresql-12.1 (1) turnkey; urgency=low
+
+  * Latest Debian Squeeze package version of PostgreSQL.
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Sun, 07 Apr 2013 08:00:00 +0200
+
+turnkey-postgresql-12.0 (1) turnkey; urgency=low
+
+  * PostgreSQL:
+
+    - Reduced default shared_buffers to 24MB, as default Debian kernel SHMMAX
+      is too low for the default 32MB. Increase per deployment:
+          - /proc/sys/kernel/shmmax
+          - /etc/postgres/8.4/main/postgresql.conf (shared_buffers)
+
+  * Major component versions
+
+    lighttpd        1.4.28-2+squeeze1
+    postgresql      8.4.12-0squeeze1
+    phppgadmin      4.2.3-1.1squeeze2
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Wed, 01 Aug 2012 08:00:00 +0200
+
+turnkey-postgresql-11.3 (1) turnkey; urgency=low
+
+  * Installed security updates.
+  * Enabled etckeeper garbage collection by default.
+  * Upgraded to latest inithooks version (adhoc re-initialization via turnkey-init)
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Mon, 05 Dec 2011 10:48:44 +0000
+
+turnkey-postgresql-11.2 (1) turnkey; urgency=low
+
+  * Installed security updates.
+  * Added HubDNS package and firstboot configuration.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Fri, 15 Jul 2011 07:47:08 +0000
+
+turnkey-postgresql-11.1 (1) turnkey; urgency=low
+
+  * Set PostgreSQL password is on firstboot (convenience, security).
+
+  * Force PostgreSQL to use Unicode/UTF8.
+
+  * Major component versions:
+
+    phppgadmin      4.2.2-1ubuntu1
+    postgresql      8.4.5-0ubuntu10.04
+    lighttpd        1.4.26-1.1ubuntu3
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Sun, 19 Dec 2010 15:01:05 +0200
+
+turnkey-postgresql-2009.10 (2) hardy; urgency=low
+
+  * Installed all security updates (see manifest for package versions).
+
+  * Install security updates on firstboot (except when running live).
+
+  * Bugfix: Updated apt preferences for auto-security updates (LP#550307).
+
+  * Trick webmin into not checking for upgrades (managed by apt).
+
+  * Included latest version of inithooks and updated scripts.
+
+  * Included wget as per common request.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Mon, 29 Mar 2010 09:02:11 +0200
+
+turnkey-postgresql-2009.10 (1) hardy; urgency=low
+
+  * di-live (installer) PostgreSQL component:
+
+    - Added support for complex passwords (LP#416515).
+    - Added CLI options (user/pass/query/chroot).
+
+  * Pinned PHPPgAdmin to update directly from Debian (security).
+
+  * Regenerates all secrets during installation / firstboot (security).
+
+  * Major component versions:
+
+    phppgadmin      4.2.2-1
+    postgresql      8.3.8-0ubuntu8.04
+    lighttpd        1.4.19-0ubuntu3.1
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Tue, 29 Sep 2009 15:39:41 +0200
+  
+turnkey-postgresql-2009.02 (1) hardy; urgency=low
+
+  * support configuring postgresql password during installation
+  * postgres password encryption enabled by default (security)
+  * trust "postgres" user when connecting over local unix sockets (convenience)
+  * set postgres password to "postgres" in live/demo mode
+
+  * updated confconsole usage template to describe connecting with psql client 
+
+  * added postgis support
+  * including webmin-postgresql
+
+  * major component versions
+
+    phppgadmin      4.2.2-1
+    postgresql      8.3.5-0ubuntu0.8.04
+    lighttpd        1.4.19-0ubuntu3
+
+  * note: please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Thu, 29 Jan 2009 13:56:27 +0200
