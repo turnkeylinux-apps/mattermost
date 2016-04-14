@@ -1,3 +1,44 @@
 #!/bin/sh -ex
 
+USER=mattermost
+DB_NAME=mattermost
+DB_PASS=$(mcookie)
+SRC=/usr/local/src/mattermost-team-*-linux-amd64.tar.gz
 
+INSTALL_DIR=/opt/mattermost
+CONF=$INSTALL/config/config.json
+
+service postgresql start
+
+# create db
+psql postgres -c "CREATE DATABASE $DB_NAME;
+psql postgres -c "CREATE USER $USER WITH PASSWORD \"$DB_PASS\";"
+psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME to $DB_USER;"
+
+# Create db user
+#su postgres -c "createuser --superuser --createdb --no-createrole $DB_USER"
+
+# Set db user password
+#su postgres -c "psql postgres" << EOF
+#alter user $DB_USER with encrypted password '$DB_PASS';
+#EOF
+
+# Set password in config file
+#sed -i "s|db_password =.*|db_password = $DB_PASS|" $CONF
+
+/mattermost-team-*-linux-amd64.tar.gz
+
+dl $URL /usr/local/src
+
+tar -zxf $SRC -C $INSTALL_DIR
+rm -f $SRC
+mv $INSTAL_DIR/$(basename $SRC) $INSTALL_DIR/mattermost
+mkdir -p $INSTALL_DIR/data
+useradd -r $USER -U
+chown -R mattermost:mattermost /opt/mattermost
+chmod -R g+w /opt/mattermost
+usermod -aG mattermost USERNAME
+
+
+# Stop postgresql server
+service postgresql stop
