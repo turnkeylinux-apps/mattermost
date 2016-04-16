@@ -6,6 +6,6 @@ dl() {
 }
 
 VERSION="2.1.0"
-https://releases.mattermost.com/${VERSION}/mattermost-team-${VERSION}-linux-amd64.tar.gz
+URL=https://releases.mattermost.com/${VERSION}/mattermost-team-${VERSION}-linux-amd64.tar.gz
 
 dl $URL /usr/local/src
