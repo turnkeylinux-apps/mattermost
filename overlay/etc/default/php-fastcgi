@@ -1,0 +1,10 @@
+SOCKETDIR=/var/run/nginx
+mkdir -p $SOCKETDIR
+chown root:www-data $SOCKETDIR
+chmod 770 $SOCKETDIR
+
+START=yes
+EXEC_AS_USER=www-data:www-data
+PHP_FCGI_SOCKET=$SOCKETDIR/$NAME.sock
+PHP_FCGI_CHILDREN=2
+PHP_FCGI_MAX_REQUESTS=1000

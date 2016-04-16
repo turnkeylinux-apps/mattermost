@@ -1,0 +1,10 @@
+include /etc/nginx/fastcgi_params;
+
+location ~ \.php$ {
+    # http://forum.nginx.org/read.php?2,88845,page=3
+    try_files $uri =404;
+
+    fastcgi_pass unix:/var/run/nginx/php-fastcgi.sock;
+    fastcgi_index index.php;
+}
+

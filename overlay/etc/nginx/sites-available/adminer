@@ -1,0 +1,31 @@
+server {
+
+    listen 12322 ssl;
+    include /etc/nginx/include/ssl;
+    root /usr/share/adminer/adminer/;
+
+    error_log /var/log/nginx/adminer-error.log;
+    location / {
+        index index.php;
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    location ~ .php$ {
+        fastcgi_param HTTPS on;
+        include /etc/nginx/include/php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    location /adminer {
+        alias /usr/share/adminer/adminer/;
+    }
+
+    location /adminer-editor {  
+        alias /usr/share/adminer/editor/;
+    }
+
+    location /externals {  
+        alias /usr/share/adminer/externals/;
+    }
+
+}
