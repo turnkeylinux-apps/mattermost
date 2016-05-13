@@ -1,0 +1,7 @@
+#!/bin/bash -e
+# set Mattermost user, password and email; set user to admin
+
+. /etc/default/inithooks
+
+[ -e $INITHOOKS_CONF ] && . $INITHOOKS_CONF
+$INITHOOKS_PATH/bin/mattermost.py --password="$APP_PASS" --email="$APP_EMAIL" --username="$username" ---teamname="$teamname"
