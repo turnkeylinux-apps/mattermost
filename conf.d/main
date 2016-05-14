@@ -8,6 +8,7 @@ SRC=/usr/local/src/mattermost-team-*-linux-amd64.tar.gz
 INSTALL_DIR=/opt/mattermost
 CONF=$INSTALL_DIR/config/config.json
 
+sed -i 's/#listen_addresses/listen_addresses/' "/etc/postgresql/9.4/main/postgresql.conf"
 service postgresql start
 
 # create db
@@ -27,6 +28,7 @@ sed -i "/DriverName/ s|mysql|postgres|" $CONF
 sed -i "/DataSource/ s|mmuser.*|$MM_SERVER\",|" $CONF
 sed -i "/ListenAddress/ s| \":| \"127.0.0.1:|" $CONF
 
+service mattermost start
 rm /etc/nginx/sites-enabled/default
 ln -s /etc/nginx/sites-available/mattermost /etc/nginx/sites-enabled/mattermost
 
@@ -34,3 +36,4 @@ ln -s /etc/nginx/sites-available/adminer /etc/nginx/sites-enabled/adminer
 
 # Stop postgresql server
 service postgresql stop
+service mattermost stop

@@ -4,7 +4,7 @@ Option:
     --password=     unless provided, will ask interactively
     --email=    unless provided, will ask interactively
     --teamname= unless provided, will ask interactively
-    --username= unless provided, will ask interactively	
+    --username= unless provided, will ask interactively
 """
 
 import re
@@ -38,7 +38,7 @@ def main():
     password = ""
     email = ""
     teamname = ""
-    username = ""	
+    username = ""
     for opt, val in opts:
         if opt in ('-h', '--help'):
             usage()
@@ -78,22 +78,18 @@ def main():
         d = Dialog('TurnKey Linux - First boot configuration')
         teamname = d.get_input(
             "Initial team name",
-            "Enter a name for the first Mattermost team"
+            "Enter a name for the first Mattermost team","Initial_Team"
         )
-    create_user = "/opt/mattermost/bin/platform -create_user -team_name=\'%s\' -email=\'%s\' -password=\'%s\'" % (teamname, email, password)
+    create_user = "/opt/mattermost/bin/platform -create_user -team_name=\'%s\' -email=\'%s\' -password=\'%s\' -username=\'%s\'" % (teamname, email, password, username)
     args = shlex.split(create_user)
-    print create_user
-    print args
     p = subprocess.Popen(args)
     role = "/opt/mattermost/bin/platform -assign_role -email=\'%s\' role='system_admin'" % (email)
     args = shlex.split(role)
-    print args
-    print args
     p = subprocess.Popen(args)
 
 
 
-    #inithooks_cache.write('APP_EMAIL', email)
+    inithooks_cache.write('APP_EMAIL', email)
 
 
 
