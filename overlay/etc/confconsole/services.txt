@@ -1,4 +1,4 @@
-Control Panel: https://$ipaddr
+Mattermost: https://$ipaddr
 Web shell:  https://$ipaddr:12320
 Webmin:     https://$ipaddr:12321
 Adminer:    https://$ipaddr:12322
