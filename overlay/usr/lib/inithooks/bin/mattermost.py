@@ -74,13 +74,13 @@ def main():
             "admin@example.com")
     if not teamname:
         d = Dialog('TurnKey Linux - First boot configuration')
-        teamname = d = get_input(
+        teamname = d.get_input(
             "Initial team name",
             "Enter a name for the first Mattermost team"
         )
     def commit():
-        os("/opt/mattermost/bin/platform -create_user -teamname='teamname'-email='email' password='password'")
-        os("/opt/mattermost/bin/platform -assign_role -email='email' role='sysadmin')
+        os("cd /opt/mattermost/bin/ && ./platform -create_user -team_name='teamname'-email='email' password='password' -username='username'")
+        os("cd /opt/mattermost/bin && ./platform -assign_role -email='email' role='sysadmin'")
 
 
     commit()
