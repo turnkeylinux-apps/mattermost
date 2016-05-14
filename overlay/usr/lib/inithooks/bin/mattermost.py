@@ -3,6 +3,8 @@
 Option:
     --pass=     unless provided, will ask interactively
     --email=    unless provided, will ask interactively
+    --username= unless provided, will ask interactively
+    --teamname= unless provided, will ask interactively
 """
 
 import re
@@ -17,6 +19,7 @@ import hashlib
 from dialog_wrapper import Dialog
 from pgsqlconf import PostgreSQL
 from subprocess import call
+import os
 
 def usage(s=None):
     if s:
@@ -28,15 +31,14 @@ def usage(s=None):
 def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
-                                       ['help', 'pass=', 'email=', 'username='])
+                                       ['help', 'pass=', 'email=', 'username=','teamname='])
     except getopt.GetoptError, e:
         usage(e)
 
     password = ""
     email = ""
     username = ""
-
-    platform = "/opt/mattermost/bin/platform"
+    teamname = ""
 
     for opt, val in opts:
         if opt in ('-h', '--help'):
@@ -47,11 +49,12 @@ def main():
             email = val
         elif opt == '--username':
             username = val
-
+        elif opt == '--teamname':
+            teamname = val
 
     if not username:
         d=Dialog('Turnkey Linux - First boot configuration')
-        username = d.get_text(
+        username = d.get_input(
             "Mattermost Admin User Name",
             "Enter a username for the Mattermost administrator.")
 
@@ -69,41 +72,26 @@ def main():
             "Mattermost Administrator's Email",
             "Enter email address for the Mattermost 'admin' user.",
             "admin@example.com")
-
+    if not teamname:
+        d = Dialog('TurnKey Linux - First boot configuration')
+        teamname = d = get_input(
+            "Initial team name",
+            "Enter a name for the first Mattermost team"
+        )
     def commit():
-        call(["platform"+ "-create_user" + "-teamname=\'default\'" + "-email=\'email\'" + "password=\'password\'"])
-        call(["platform" + "-assign_role" + "-email=\'email\'" + "role='sysadmin'"])
+        os("/opt/mattermost/bin/platform -create_user -teamname='teamname'-email='email' password='password'")
+        os("/opt/mattermost/bin/platform -assign_role -email='email' role='sysadmin')
+
 
     commit()
 
     #inithooks_cache.write('APP_EMAIL', email)
 
 
-"""
-    sitesalt = ""
-    for line in file("/var/www/mahara/config.php", "r").readlines():
-        m = re.match(r"\$cfg->passwordsaltmain = '(.*)';", line.strip())
-        if m:
-            sitesalt = m.groups()[0]
 
-    salt = hashlib.sha1(str(random.random())).hexdigest()[:8]
-    fullsalt = hashlib.md5(sitesalt + salt).hexdigest()[:16]
 
-    alg = "$6$"
-    hash = hashlib.sha1(salt + password).hexdigest()
-    hash = crypt.crypt(hash, alg + fullsalt)
-    hash = alg + hash[len(alg)+len(fullsalt):]
-
-    p = PostgreSQL(database='mahara')
-    p.execute('UPDATE usr SET salt=\'%s\' WHERE username=\'admin\';' % salt)
-    p.execute('UPDATE usr SET password=\'%s\' WHERE username=\'admin\';' % hash)
-    p.execute('UPDATE usr SET passwordchange=0 WHERE username=\'admin\';')
-    p.execute('UPDATE usr SET email=\'%s\' WHERE username=\'admin\';' % email)
-    p.execute('UPDATE artefact SET title=\'%s\' WHERE artefacttype=\'email\';' % email)
-    p.execute('UPDATE artefact_internal_profile_email SET email=\'%s\' WHERE owner=1;' % email)
-"""
 
 if __name__ == "__main__":
     main()
 
-Status API Training Shop Blog About
+#Status API Training Shop Blog About
