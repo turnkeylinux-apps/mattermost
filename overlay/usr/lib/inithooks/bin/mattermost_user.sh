@@ -1,11 +1,9 @@
 #!/bin/bash -ex
 platform="/opt/mattermost/bin"
 
-username = $1
-email = $2
-password = $3
+username=""$1"
+email="$2"
 
+cd $platform && ./platform -create_user -email="$email" -password="$password" -username="$username"
 
-cd $platform && ./platform -create_user -email="admin@example.com" -password="admin" -username="admin"
-
-cd $platform && ./platform -assign_role -email="admin@example.com" role="system_admin"
+cd $platform && ./platform -assign_role -email="$email" role="system_admin"
