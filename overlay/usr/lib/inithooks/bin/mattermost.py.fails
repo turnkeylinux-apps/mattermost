@@ -1,10 +1,9 @@
 #!/usr/bin/python
 """Set Mattermost admin user, password, email, and team name
 Option:
-    --password=     unless provided, will ask interactively
+    --pass=     unless provided, will ask interactively
     --email=    unless provided, will ask interactively
     --teamname= unless provided, will ask interactively
-    --username= unless provided, will ask interactively	
 """
 
 import re
@@ -31,20 +30,20 @@ def usage(s=None):
 def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
-                                       ['help', 'pass=', 'email=', 'teamname=', 'username='])
+                                       ['help', 'pass=', 'email=', 'teamname=', 'username'])
     except getopt.GetoptError, e:
         usage(e)
 
     password = ""
     email = ""
     teamname = ""
-    username = ""	
+    username = ""
     for opt, val in opts:
         if opt in ('-h', '--help'):
             usage()
         elif opt == '--email':
             email = val
-        elif opt == '--password':
+        elif opt == '--pass':
             password = val
         elif opt == '--username':
             username = val
@@ -55,7 +54,7 @@ def main():
         d=Dialog('Turnkey Linux - First boot configuration')
         username = d.get_input(
             "Mattermost Admin User Name",
-            "Enter a username for the Mattermost administrator.", "admin")
+            "Enter a username for the Mattermost administrator.")
 
 
     if not email:
@@ -80,18 +79,16 @@ def main():
             "Initial team name",
             "Enter a name for the first Mattermost team"
         )
-    create_user = "/opt/mattermost/bin/platform -create_user -team_name=\'%s\' -email=\'%s\' -password=\'%s\'" % (teamname, email, password)
-    args = shlex.split(create_user)
-    print create_user
-    print args
-    p = subprocess.Popen(args)
-    role = "/opt/mattermost/bin/platform -assign_role -email=\'%s\' role='system_admin'" % (email)
-    args = shlex.split(role)
-    print args
-    print args
-    p = subprocess.Popen(args)
+    def commit():
+        create = "/opt/mattermost/bin/platform -create_user -team_name='%s\' -email=\'%s\' -password=\'%s\'" % (teamname, email, password)
+        args = shlex.split(create)
+	p = subprocess.Popen(args)
+	role = "/opt/mattermost/bin/platform -assign_role -email=\'email\' role=\'system_admin\'"
+	args = shlex.split(role)
+	p = subprocess.Popen(args)
 
 
+    commit()
 
     #inithooks_cache.write('APP_EMAIL', email)
 
