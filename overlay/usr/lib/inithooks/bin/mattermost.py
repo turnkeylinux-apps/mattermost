@@ -80,11 +80,14 @@ def main():
             "Initial team name",
             "Enter a name for the first Mattermost team","Initial_Team"
         )
-    create_user = "/opt/mattermost/bin/platform -create_user -team_name=\'%s\' -email=\'%s\' -password=\'%s\' -username=\'%s\'" % (teamname, email, password, username)
-    args = shlex.split(create_user)
-    p = subprocess.Popen(args)
-    role = "/opt/mattermost/bin/platform -assign_role -email=\'%s\' role='system_admin'" % (email)
-    args = shlex.split(role)
+    #create_user = "/opt/mattermost/bin/platform -create_user -team_name=\'%s\' -email=\'%s\' -password=\'%s\' -username=\'%s\'" % (teamname, email, password, username)
+    #args = shlex.split(create_user)
+    #p = subprocess.Popen(args)
+    #role = "/opt/mattermost/bin/platform -assign_role -email=\'%s\' role='system_admin'" % (email)
+    #args = shlex.split(role)
+    #p = subprocess.Popen(args)
+    command = "./mattermost_user.sh %s %s %s" % (username, password, email)
+    args = shlex.split(command)
     p = subprocess.Popen(args)
 
 
