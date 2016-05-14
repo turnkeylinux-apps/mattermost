@@ -1,8 +1,9 @@
 #!/bin/bash -ex
 platform="/opt/mattermost/bin"
 
-username=""$1"
+username="$1"
 email="$2"
+password="$3"
 
 cd $platform && ./platform -create_user -email="$email" -password="$password" -username="$username"
 
