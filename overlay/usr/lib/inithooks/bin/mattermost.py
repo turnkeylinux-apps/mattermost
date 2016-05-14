@@ -82,10 +82,10 @@ def main():
     def commit():
         create = "/opt/mattermost/bin/platform -create_user -team_name=\'teamname\' -email=\'email\' -password=\'password\'"
         args = shlex.split(create)
-	    p = subprocess.Popen(args)
-	    role = "/opt/mattermost/bin/platform -assign_role -email=\'email\' role=\'system_admin\'"
-	    args = shlex.split(role)
-	    p = subprocess.Popen(args)
+	p = subprocess.Popen(args)
+	role = "/opt/mattermost/bin/platform -assign_role -email=\'email\' role=\'system_admin\'"
+	args = shlex.split(role)
+	p = subprocess.Popen(args)
 
 
     commit()
