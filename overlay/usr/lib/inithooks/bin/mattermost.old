@@ -3,6 +3,7 @@
 Option:
     --pass=     unless provided, will ask interactively
     --email=    unless provided, will ask interactively
+    --username= unless provided, will ask interactively
     --teamname= unless provided, will ask interactively
 """
 
@@ -18,8 +19,8 @@ import hashlib
 from dialog_wrapper import Dialog
 from pgsqlconf import PostgreSQL
 from subprocess import call
-import subprocess
-import shlex
+import os
+
 def usage(s=None):
     if s:
         print >> sys.stderr, "Error:", s
@@ -30,32 +31,38 @@ def usage(s=None):
 def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
-                                       ['help', 'pass=', 'email=', 'teamname='])
+                                       ['help', 'pass=', 'email=', 'username=','teamname='])
     except getopt.GetoptError, e:
         usage(e)
 
     password = ""
     email = ""
+    username = ""
     teamname = ""
 
     for opt, val in opts:
         if opt in ('-h', '--help'):
             usage()
-        elif opt == '--email':
-            email = val
         elif opt == '--pass':
             password = val
-#        elif opt == '--username':
-#            username = val
+        elif opt == '--email':
+            email = val
+        elif opt == '--username':
+            username = val
         elif opt == '--teamname':
             teamname = val
 
-#    if not username:
-#        d=Dialog('Turnkey Linux - First boot configuration')
-#        username = d.get_input(
-#            "Mattermost Admin User Name",
-#            "Enter a username for the Mattermost administrator.")
+    if not username:
+        d=Dialog('Turnkey Linux - First boot configuration')
+        username = d.get_input(
+            "Mattermost Admin User Name",
+            "Enter a username for the Mattermost administrator.")
 
+    if not password:
+        d = Dialog('TurnKey Linux - First boot configuration')
+        password = d.get_password(
+            "Mattermost Admin Password",
+            "Enter new password for the Mattermost administrator's  account.")
 
     if not email:
         if 'd' not in locals():
@@ -65,14 +72,6 @@ def main():
             "Mattermost Administrator's Email",
             "Enter email address for the Mattermost 'admin' user.",
             "admin@example.com")
-
-
-    if not password:
-        d = Dialog('TurnKey Linux - First boot configuration')
-        password = d.get_password(
-            "Mattermost Admin Password",
-            "Enter new password for the Mattermost administrator's  account.")
-
     if not teamname:
         d = Dialog('TurnKey Linux - First boot configuration')
         teamname = d.get_input(
@@ -80,12 +79,8 @@ def main():
             "Enter a name for the first Mattermost team"
         )
     def commit():
-        create = "/opt/mattermost/bin/platform -create_user -team_name=\'teamname\' -email=\'email\' -password=\'password\'"
-        args = shlex.split(create)
-	    p = subprocess.Popen(args)
-	    role = "/opt/mattermost/bin/platform -assign_role -email=\'email\' role=\'system_admin\'"
-	    args = shlex.split(role)
-	    p = subprocess.Popen(args)
+        os("cd /opt/mattermost/bin/ && ./platform -create_user -team_name='teamname'-email='email' password='password' -username='username'")
+        os("cd /opt/mattermost/bin && ./platform -assign_role -email='email' role='sysadmin'")
 
 
     commit()
@@ -98,3 +93,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#Status API Training Shop Blog About
