@@ -41,3 +41,4 @@ update-rc.d php-fastcgi defaults
 # Stop postgresql server
 service mattermost stop
 service postgresql stop
+service nginx stop
