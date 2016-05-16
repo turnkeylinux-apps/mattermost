@@ -27,7 +27,8 @@ MM_SERVER="postgres://${USER}:${DB_PASS}@127.0.0.1:5432/mattermost?sslmode=disab
 sed -i "/DriverName/ s|mysql|postgres|" $CONF
 sed -i "/DataSource/ s|mmuser.*|$MM_SERVER\",|" $CONF
 sed -i "/ListenAddress/ s| \":| \"127.0.0.1:|" $CONF
-
+service nginx start
+service php-fastcgi start
 service mattermost start
 rm /etc/nginx/sites-enabled/default
 ln -s /etc/nginx/sites-available/mattermost /etc/nginx/sites-enabled/mattermost
@@ -38,3 +39,5 @@ ln -s /etc/nginx/sites-available/adminer /etc/nginx/sites-enabled/adminer
 service mattermost stop
 
 service postgresql stop
+service nginx stop
+service php-fastcgi stop
