@@ -39,5 +39,3 @@ ln -s /etc/nginx/sites-available/adminer /etc/nginx/sites-enabled/adminer
 service mattermost stop
 
 service postgresql stop
-service nginx stop
-service php-fastcgi stop
