@@ -86,9 +86,10 @@ def main():
     #role = "/opt/mattermost/bin/platform -assign_role -email=\'%s\' role='system_admin'" % (email)
     #args = shlex.split(role)
     #p = subprocess.Popen(args)
-    command = "./mattermost_user.sh %s %s %s" % (username, password, email)
-    args = shlex.split(command)
-    p = subprocess.Popen(args)
+    bashcommand = "./mattermost_user.sh %s %s %s %s" % (username, password, email, teamname)
+    pieces = shlex.split(bashcommand)
+    #subprocess.Popen(pieces)
+    subprocess.call(pieces)
 
 
 
