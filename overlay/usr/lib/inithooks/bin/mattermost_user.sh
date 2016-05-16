@@ -10,7 +10,7 @@ if [ -e "$platform/platform" ]; then
 
 	cat <<EOF
 $platform/platform -create_user -team_name="$teamname" -email="$email" -password="$password" -username="username"
-$platform/platform -assign_role -email="$email" -role="system_admin")
+$platform/platform -assign_role -email="$email" -role="system_admin"
 EOF
 exit 0
 else:
