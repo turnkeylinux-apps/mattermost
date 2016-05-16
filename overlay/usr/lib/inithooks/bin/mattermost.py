@@ -12,15 +12,16 @@ import sys
 import getopt
 import inithooks_cache
 
-import crypt
-import random
-import hashlib
+#import crypt
+#import random
+#import hashlib
 
 from dialog_wrapper import Dialog
-from pgsqlconf import PostgreSQL
-from subprocess import call
+#from pgsqlconf import PostgreSQL
+#from subprocess import call
 import subprocess
 import shlex
+
 def usage(s=None):
     if s:
         print >> sys.stderr, "Error:", s
@@ -31,7 +32,7 @@ def usage(s=None):
 def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
-                                       ['help', 'pass=', 'email=', 'teamname=', 'username='])
+                                       ['help', 'password=', 'email=', 'teamname=', 'username='])
     except getopt.GetoptError, e:
         usage(e)
 
@@ -39,6 +40,7 @@ def main():
     email = ""
     teamname = ""
     username = ""
+
     for opt, val in opts:
         if opt in ('-h', '--help'):
             usage()
