@@ -1,0 +1,6 @@
+    #create_user = "/opt/mattermost/bin/platform -create_user -team_name=\'%s\' -email=\'%s\' -password=\'%s\' -username=\'%s\'" % (teamname, email, password, username)
+    #args = shlex.split(create_user)
+    #p = subprocess.Popen(args)
+    #role = "/opt/mattermost/bin/platform -assign_role -email=\'%s\' role='system_admin'" % (email)
+    #args = shlex.split(role)
+    #p = subprocess.Popen(args)
