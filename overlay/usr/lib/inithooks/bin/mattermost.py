@@ -96,10 +96,6 @@ def main():
 
 
     inithooks_cache.write('APP_EMAIL', email)
-    inithooks_cache.write('APP_NAME', username)
-    inithooks_cache.write('TEAMNAME', teamname)
-    inithooks_cache.write('APP_PASS', password)
-
 
 
 
