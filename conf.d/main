@@ -9,8 +9,9 @@ INSTALL_DIR=/opt/mattermost
 CONF=$INSTALL_DIR/config/config.json
 
 sed -i 's/#listen_addresses/listen_addresses/' "/etc/postgresql/9.4/main/postgresql.conf"
-service postgresql start
 
+service postgresql start
+update-rc.d php-fastcgi defaults
 # create db
 psql postgres -c "CREATE DATABASE $DB_NAME;"
 psql postgres -c "CREATE USER $USER WITH PASSWORD '$DB_PASS';"
