@@ -57,7 +57,7 @@ def main():
 
 
     if not email:
-        if 'd' not in locals():
+        #if 'd' not in locals():
 
         email = d.get_email(
             "Mattermost Administrator's Email",
@@ -86,7 +86,7 @@ def main():
     """
 
 
-    bashcommand = "./mattermost_user.sh %s %s %s" % (username, password, email)
+    bashcommand = "/usr/lib/inithooks/bin/mattermost_user.sh %s %s %s" % (username, password, email)
     pieces = shlex.split(bashcommand)
     #subprocess.Popen(pieces)
     subprocess.call(pieces)
