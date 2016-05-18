@@ -3,7 +3,6 @@
 Option:
     --password=     unless provided, will ask interactively
     --email=    unless provided, will ask interactively
-    --teamname= unless provided, will ask interactively
     --username= unless provided, will ask interactively
 """
 
@@ -32,13 +31,12 @@ def usage(s=None):
 def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
-                                       ['help', 'password=', 'email=', 'teamname=', 'username='])
+                                       ['help', 'password=', 'email=', 'username='])
     except getopt.GetoptError, e:
         usage(e)
 
     password = ""
     email = ""
-    teamname = ""
     username = ""
 
     for opt, val in opts:
@@ -50,8 +48,6 @@ def main():
             password = val
         elif opt == '--username':
             username = val
-        elif opt == '--teamname':
-            teamname = val
 
     if not username:
         d=Dialog('Turnkey Linux - First boot configuration')
@@ -62,7 +58,6 @@ def main():
 
     if not email:
         if 'd' not in locals():
-            d = Dialog('TurnKey Linux - First boot configuration')
 
         email = d.get_email(
             "Mattermost Administrator's Email",
@@ -71,24 +66,27 @@ def main():
 
 
     if not password:
-        d = Dialog('TurnKey Linux - First boot configuration')
         password = d.get_password(
             "Mattermost Admin Password",
             "Enter new password for the Mattermost administrator's  account.")
 
-    if not teamname:
+    """if not teamname:
         d = Dialog('TurnKey Linux - First boot configuration')
         teamname = d.get_input(
             "Initial team name",
-            "Enter a name for the first Mattermost team","Initial_Team"
-        )
-    #create_user = "/opt/mattermost/bin/platform -create_user -team_name=\'%s\' -email=\'%s\' -password=\'%s\' -username=\'%s\'" % (teamname, email, password, username)
-    #args = shlex.split(create_user)
-    #p = subprocess.Popen(args)
-    #role = "/opt/mattermost/bin/platform -assign_role -email=\'%s\' role='system_admin'" % (email)
-    #args = shlex.split(role)
-    #p = subprocess.Popen(args)
-    bashcommand = "./mattermost_user.sh %s %s %s %s" % (username, password, email, teamname)
+            "Enter a name for the first Mattermost team","Initial_Team")"""
+
+    """
+    create_user = "/opt/mattermost/bin/platform -create_user -team_name=\'%s\' -email=\'%s\' -password=\'%s\' -username=\'%s\'" % (teamname, email, password, username)
+    args = shlex.split(create_user)
+    p = subprocess.Popen(args)
+    role = "/opt/mattermost/bin/platform -assign_role -email=\'%s\' role='system_admin'" % (email)
+    args = shlex.split(role)
+    p = subprocess.Popen(args)
+    """
+
+
+    bashcommand = "./mattermost_user.sh %s %s %s" % (username, password, email)
     pieces = shlex.split(bashcommand)
     #subprocess.Popen(pieces)
     subprocess.call(pieces)
