@@ -2,7 +2,7 @@ General Notes
 ================
 
 * Tested with Mattermost 3.0.0
-* Mattemost postgreSQL user is *mattermost*. The password is randomly generated. To check the password, visit /opt/mattermost/config/config.json.
+* Mattermost postgreSQL user is *mattermost*. The password is randomly generated. To check the password, visit /opt/mattermost/config/config.json.
 
 Current Status
 ================
