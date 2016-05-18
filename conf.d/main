@@ -29,7 +29,7 @@ sed -i "/DriverName/ s|mysql|postgres|" $CONF
 sed -i "/DataSource/ s|mmuser.*|$MM_SERVER\",|" $CONF
 sed -i "/ListenAddress/ s| \":| \"127.0.0.1:|" $CONF
 sed -i 's|"SMTPServer": "",|"SMTPServer": "localhost",|' $CONF
-sed -i 's|"SMTPPort": ""|"SMTPPort:" "25"|' $CONF
+sed -i 's|"SMTPPort": "",|"SMTPPort": "25",|' $CONF
 update-rc.d mattermost defaults
 service nginx start
 service php-fastcgi start
