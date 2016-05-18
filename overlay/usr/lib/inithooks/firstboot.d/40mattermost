@@ -4,4 +4,4 @@
 . /etc/default/inithooks
 
 [ -e $INITHOOKS_CONF ] && . $INITHOOKS_CONF
-$INITHOOKS_PATH/bin/mattermost.py --password="$APP_PASS" --email="$APP_EMAIL" --username="$APP_USER" --teamname="$TEAMNAME"
+$INITHOOKS_PATH/bin/mattermost.py --password="$APP_PASS" --email="$APP_EMAIL" --username="$APP_USER"

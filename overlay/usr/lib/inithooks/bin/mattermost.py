@@ -86,9 +86,8 @@ def main():
     """
 
 
-    bashcommand = "/usr/lib/inithooks/bin/mattermost_user.sh %s %s %s" % (username, password, email)
+    bashcommand = "/usr/lib/inithooks/bin/mattermost_user.sh %s %s %s &>/dev/null" % (username, password, email)
     pieces = shlex.split(bashcommand)
-    #subprocess.Popen(pieces)
     subprocess.call(pieces)
 
 
