@@ -45,4 +45,6 @@ update-rc.d mattermost defaults
 service mattermost stop
 service postgresql stop
 service nginx stop
+chown root:root /etc/systemd/system/mattermost.service
+chmod +x /etc/systemd/system/mattermost.service
 systemctl reenable mattermost.service
