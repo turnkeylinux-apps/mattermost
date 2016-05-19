@@ -1,0 +1,13 @@
+[Unit]
+Description=mattermost
+After=multi-user.target
+
+[Service]
+User=mattermost
+WorkingDirectory=/opt/mattermost/
+ExecStart=/opt/mattermost/bin/platform
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

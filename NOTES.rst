@@ -8,18 +8,13 @@ Current Status
 ================
 
 * Inithooks: As of May 16, both scripts in inithooks/bin work. They need a cleaning.
-* Inithooks: Currently, if inithooks run a second time, mattermost inithooks will through an error. It seems like the solution is this::
-
-    cd /opt/mattermost/bin && platform -reset_database
-    echo "YES/n"
-    echo "YES/n"
-
 * mattermost service: This is the current problem being resolved (May 17). The mattermost service isn't starting on reboot.
 
 
 To Do
 =================
 
+* Mattermost service is still a problem. Checked permissions. A recommended workaround: http://zwarag.com/2015/10/how-to-use-systemd-to-run-the-mattermost-chat-platform/
 * TKLBAM profile
 * populate .art folder
 * Solve Mattermost service problem
