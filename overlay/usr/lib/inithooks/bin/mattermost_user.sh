@@ -6,6 +6,11 @@ password="$2"
 email="$3"
 #teamname="$4"
 
+function reset_db()
+{
+	cd $platform && echo -e "YES\nYES\n" | ./platform -reset_database
+}
+
 function create ()
 {
 	cd $platform && ./platform -create_user -email="$email" -password="$password" -username="$username"
@@ -18,6 +23,7 @@ function assign ()
 }
 
 if [ -e "$platform/platform" ]; then
+  reset_database $platform
 	create $platform $email $password $username
 	assign $platform $email
 	exit 0
