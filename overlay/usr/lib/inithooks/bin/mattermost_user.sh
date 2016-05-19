@@ -23,7 +23,7 @@ function assign ()
 }
 
 if [ -e "$platform/platform" ]; then
-  reset_database $platform
+    reset_db $platform
 	create $platform $email $password $username
 	assign $platform $email
 	exit 0
