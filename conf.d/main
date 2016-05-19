@@ -34,6 +34,7 @@ sed -i "/DataSource/ s|mmuser.*|$MM_SERVER\",|" $CONF
 sed -i "/ListenAddress/ s| \":| \"127.0.0.1:|" $CONF
 sed -i 's|"SMTPServer": "",|"SMTPServer": "localhost",|' $CONF
 sed -i 's|"SMTPPort": "",|"SMTPPort": "25",|' $CONF
+sed -i 's|"SendEmailNotifications": false|"SendEmailNotifications": true,|' $CONF
 
 #start services
 service nginx start
