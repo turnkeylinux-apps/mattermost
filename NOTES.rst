@@ -8,12 +8,19 @@ Current Status
 ================
 
 * Inithooks: As of May 16, both scripts in inithooks/bin work. They need a cleaning.
+* Inithooks: Currently, if inithooks run a second time, mattermost inithooks will through an error. It seems like the solution is this::
+
+    cd /opt/mattermost/bin && platform -reset_database
+    echo "YES/n"
+    echo "YES/n"
+
 * mattermost service: This is the current problem being resolved (May 17). The mattermost service isn't starting on reboot.
-* php-fastcgi service: Same status as mattermost service above.
+
 
 To Do
 =================
 
 * TKLBAM profile
 * populate .art folder
-* out of box email configuration
+* Solve Mattermost service problem
+* Solution to problem when Inithooks run anytime after the initial configuration (mattermost hooks only.)
