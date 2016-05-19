@@ -45,3 +45,4 @@ update-rc.d mattermost defaults
 service mattermost stop
 service postgresql stop
 service nginx stop
+systemctl reenable mattermost.service
