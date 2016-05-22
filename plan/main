@@ -6,8 +6,10 @@ postgresql
 postgresql-contrib
 postgresql-9.4-postgis
 
-adminer                 /* Adminer - Replaces phpPgAdmin */
-php5-cgi                /* needed for lighty cgi and adminer depend */
+python-bcrypt
+
+adminer
+php5-cgi                /* adminer depend */
 php5-pgsql              /* needed for adminer pg support */
 
 webmin-postgresql       /* webmin is in base, give the user the option */
