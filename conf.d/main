@@ -35,7 +35,10 @@ update-rc.d mattermost defaults
 MM_SERVER="postgres://${USER}:${DB_PASS}@127.0.0.1:5432/mattermost?sslmode=disable\&connect_timeout=10"
 sed -i "/DriverName/ s|mysql|postgres|" $CONF
 sed -i "/DataSource/ s|mmuser.*|$MM_SERVER\",|" $CONF
-sed -i "/ListenAddress/ s| \":| \"127.0.0.1:|" $CONF
+sed -i '/ListenAddress/ s| ":| "127.0.0.1:|' $CONF
+sed -i '/SiteName/ s|:.*|: "TurnKey Mattermost",|' $CONF
+sed -i '/AboutLink/ s|:.*|: "https://www.turnkeylinux.org/mattermost",|' $CONF
+sed -i '/HelpLink/ s|:.*|: "https://www.turnkeylinux.org/forum",|' $CONF
 sed -i 's|"SMTPServer": "",|"SMTPServer": "localhost",|' $CONF
 sed -i 's|"SMTPPort": "",|"SMTPPort": "25",|' $CONF
 sed -i 's|"SendEmailNotifications": false|"SendEmailNotifications": true|' $CONF
