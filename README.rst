@@ -30,10 +30,10 @@ Supervised Manual Mattermost Update
 -----------------------------------
 
 **Note:** Check the Mattermost docs to ensure that upgrading your 
-current version to the latest is supported. Always enure that 
+current version to the latest is supported. Always ensure that 
 you have a tested backup before proceeding with software updates.
 
-See the Offical `Mattermost docs`_ for instructions on how to update.
+See the Official `Mattermost docs`_ for instructions on how to update.
 
 Mattermost does not have a security only newsletter so we recommend that 
 you subcribe to the `Mattermost Newsletter`_ to keep up to date.
