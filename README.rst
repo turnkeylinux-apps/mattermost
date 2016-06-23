@@ -1,9 +1,12 @@
-Mattermost - open source, self-hosted Slack-alternative
+Mattermost - open source, self-hosted Slack alternative
 =======================================================
 
-`Mattermost`_ is an alternative to proprietary SaaS messaging and
-brings all your team communication into one place, making it 
-searchable and accessible anywhere. 
+`Mattermost`_ is a sleek, Slack-compatible open source service that makes it
+easy to self-host team communications. It brings messaging and file
+sharing into one place, accessible across PCs and mobile, with archiving
+and search.  It integrates with a range of apps out-of-the-box and is
+extendable so you can build custom functionality on top of the Golang /
+React core.
 
 This appliance includes all the standard features in `TurnKey Core`_,
 and on top of that:
