@@ -1,5 +1,5 @@
-Mattermost - open source, self-hosted Slack alternative
-=======================================================
+Mattermost - Self-hosted Slack compatible team messaging
+========================================================
 
 `Mattermost`_ is a sleek, Slack-compatible open source service that makes it
 easy to self-host team communications. It brings messaging and file
