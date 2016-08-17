@@ -1,3 +1,11 @@
+turnkey-mattermost-14.1 (2) turnkey; urgency=medium
+
+  * Added missing fastcgi_params file (as per #685, httpoxy issue)
+
+  * Fixed changelog
+
+ -- Stefan Davis <stefan@turnkeylinux.com>  Tue, 16 Aug 2016 05:20:22 +1000
+
 turnkey-mattermost-14.1 (1) turnkey; urgency=low
 
   * Initial appliance release.
@@ -5,5 +13,4 @@ turnkey-mattermost-14.1 (1) turnkey; urgency=low
   * Note: Please refer to turnkey-core's changelog for changes common to all
     appliances. Here we only describe changes specific to this appliance.
 
- -- Jeremy Davis <jeremy@turnkeylinux.org>  T14 Apr 2016 21:19:07 +1000
-
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  14 Apr 2016 21:19:07 +1000
