@@ -44,13 +44,12 @@ sed -i 's|"SMTPPort": "",|"SMTPPort": "25",|' $CONF
 sed -i 's|"SendEmailNotifications": false|"SendEmailNotifications": true|' $CONF
 
 cd $INSTALL_DIR/bin
-su -c "./platform -create_user -email=\"$ADMIN_EMAIL\" -password=\"$ADMIN_PASS\" -username=\"$ADMIN_USER\"" $USER
-su -c "./platform -assign_role -email=\"$ADMIN_EMAIL\" -role=\"system_admin\"" $USER
+su -c "./platform user create --email=\"$ADMIN_EMAIL\" --password=\"$ADMIN_PASS\" --username=\"$ADMIN_USER\" --system_admin" $USER
+#su -c "./platform roles system_admin" $USER 
 
 #confs for nginx
 rm /etc/nginx/sites-enabled/default
 ln -s /etc/nginx/sites-available/mattermost /etc/nginx/sites-enabled/mattermost
-ln -s /etc/nginx/sites-available/adminer /etc/nginx/sites-enabled/adminer
 
 # Stop services
 service postgresql stop
