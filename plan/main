@@ -4,12 +4,12 @@ nginx
 
 postgresql
 postgresql-contrib
-postgresql-9.4-postgis
+postgresql-9.6-postgis
 
 python-bcrypt
 
 adminer
-php5-cgi                /* adminer depend */
-php5-pgsql              /* needed for adminer pg support */
+php-cgi                /* adminer depend */
+php-pgsql              /* needed for adminer pg support */
 
 webmin-postgresql       /* webmin is in base, give the user the option */
