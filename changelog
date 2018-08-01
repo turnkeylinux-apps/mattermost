@@ -1,15 +1,17 @@
 turnkey-mattermost-14.2 (1) turnkey; urgency=low
 
-  * Updated Mattermost to latest upstream (4.8.0)
+  * Updated Mattermost to latest upstream (5.1.0)
 
-  * Inithook now sets a domain.
+  * Domain set on firstboot.
 
-  * Installed security updates.
+  * Includes PHP7.0 (installed from Debian repos)
+
+  * Updated PHP default settings
 
   * Note: Please refer to turnkey-core's changelog for changes common to all
     appliances. Here we only describe changes specific to this appliance.
 
- -- Zhenya Hvorostian <zhenya@turnkeylinux.org>  Fri, 13 Apr 2018 02:31:10 +0300
+ -- Zhenya Hvorostian <zhenya@turnkeylinux.org>  Fri, 03 Jul 2018 02:31:10 +0300
 
 turnkey-mattermost-14.2 (1) turnkey; urgency=low
 
