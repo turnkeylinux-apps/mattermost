@@ -51,7 +51,7 @@ Credentials *(passwords set at first boot)*
 	
 .. _Mattermost: https://www.mattermost.org/
 .. _TurnKey Core: https://www.turnkeylinux.org/core
-.. _Adminer: http://adminer.org/
-.. _Mattermost docs: http://docs.mattermost.com/administration/upgrade.html
-.. _Mattermost Newsletter: http://mattermost.us11.list-manage.com/subscribe?u=6cdba22349ae374e188e7ab8e&id=2add1c8034
+.. _Adminer: https://adminer.org/
+.. _Mattermost docs: https://docs.mattermost.com/administration/upgrade.html
+.. _Mattermost Newsletter: https://mattermost.us11.list-manage.com/subscribe?u=6cdba22349ae374e188e7ab8e&id=2add1c8034
 
