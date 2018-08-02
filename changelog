@@ -1,4 +1,4 @@
-turnkey-mattermost-14.2 (1) turnkey; urgency=low
+turnkey-mattermost-15.0 (1) turnkey; urgency=low
 
   * Updated Mattermost to latest upstream (5.1.0)
 
