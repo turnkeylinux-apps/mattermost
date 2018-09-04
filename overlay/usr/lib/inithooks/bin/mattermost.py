@@ -1,9 +1,9 @@
 #!/usr/bin/python
 """Set Mattermost admin user, password, email, and team name
 Option:
-    --password=     unless provided, will ask interactively
+    --pass=     unless provided, will ask interactively
     --email=    unless provided, will ask interactively
-    --domain=   unless provided, will ask interactively 
+    --domain=   unless provided, will ask interactively
 """
 
 import re
@@ -23,6 +23,8 @@ def usage(s=None):
     print >> sys.stderr, __doc__
     sys.exit(1)
 
+DEFAULT_DOMAIN="www.example.com"
+
 def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
@@ -32,17 +34,23 @@ def main():
 
     password = ""
     email = ""
-    domain = ""   
+    domain = ""
 
     for opt, val in opts:
         if opt in ('-h', '--help'):
             usage()
+        elif opt == '--pass':
+            password = val
         elif opt == '--email':
             email = val
-        elif opt == '--password':
-            password = val
         elif opt == '--domain':
             domain = val
+
+    if not password:
+        d = Dialog('TurnKey Linux - First boot configuration')
+        password = d.get_password(
+            "Mattermost Admin Password",
+            "Enter new password for Mattermost 'admin' account.")
 
     if not email:
         if 'd' not in locals():
@@ -55,24 +63,21 @@ def main():
 
     inithooks_cache.write('APP_EMAIL', email)
 
-    if not password:
-        password = d.get_password(
-            "Mattermost Admin Password",
-            "Enter new password for Mattermost 'admin' account.")
-
     if not domain:
         if 'd' not in locals():
             d = Dialog('TurnKey Linux - First boot configuration')
         domain = d.get_input(
                  "Mattermost domain",
                  "Enter domain to serve Mattermost",
-                 "https://example.com")
-
+                 DEFAULT_DOMAIN)
 
     if domain == "DEFAULT":
         domain = DEFAULT_DOMAIN
 
     inithooks_cache.write('APP_DOMAIN', domain)
+
+    if not domain.startswith('https://') and not domain.startswith('http://'):
+        domain = 'https://'+domain
 
     system('sed -i "/SiteURL/ s|\\":.*|\\": \\\"%s\\\",|" /opt/mattermost/config/config.json' % domain)
 
