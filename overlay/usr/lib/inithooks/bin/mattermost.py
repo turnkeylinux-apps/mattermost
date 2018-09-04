@@ -1,9 +1,9 @@
 #!/usr/bin/python
 """Set Mattermost admin user, password, email, and team name
 Option:
-    --password=     unless provided, will ask interactively
+    --pass=     unless provided, will ask interactively
     --email=    unless provided, will ask interactively
-    --domain=   unless provided, will ask interactively 
+    --domain=   unless provided, will ask interactively
 """
 
 import re
@@ -34,17 +34,23 @@ def main():
 
     password = ""
     email = ""
-    domain = ""   
+    domain = ""
 
     for opt, val in opts:
         if opt in ('-h', '--help'):
             usage()
+        elif opt == '--pass':
+            password = val
         elif opt == '--email':
             email = val
-        elif opt == '--password':
-            password = val
         elif opt == '--domain':
             domain = val
+
+    if not password:
+        d = Dialog('TurnKey Linux - First boot configuration')
+        password = d.get_password(
+            "Mattermost Admin Password",
+            "Enter new password for Mattermost 'admin' account.")
 
     if not email:
         if 'd' not in locals():
@@ -56,11 +62,6 @@ def main():
             "admin@example.com")
 
     inithooks_cache.write('APP_EMAIL', email)
-
-    if not password:
-        password = d.get_password(
-            "Mattermost Admin Password",
-            "Enter new password for Mattermost 'admin' account.")
 
     if not domain:
         if 'd' not in locals():
