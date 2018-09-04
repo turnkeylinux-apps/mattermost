@@ -23,6 +23,8 @@ def usage(s=None):
     print >> sys.stderr, __doc__
     sys.exit(1)
 
+DEFAULT_DOMAIN="www.example.com"
+
 def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
@@ -66,8 +68,7 @@ def main():
         domain = d.get_input(
                  "Mattermost domain",
                  "Enter domain to serve Mattermost",
-                 "https://example.com")
-
+                 DEFAULT_DOMAIN)
 
     if domain == "DEFAULT":
         domain = DEFAULT_DOMAIN
