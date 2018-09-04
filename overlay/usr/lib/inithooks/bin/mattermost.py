@@ -76,6 +76,9 @@ def main():
 
     inithooks_cache.write('APP_DOMAIN', domain)
 
+    if not domain.startswith('https://') and not domain.startswith('http://'):
+        domain = 'https://'+domain
+
     system('sed -i "/SiteURL/ s|\\":.*|\\": \\\"%s\\\",|" /opt/mattermost/config/config.json' % domain)
 
     salt = bcrypt.gensalt()
