@@ -1,3 +1,16 @@
+turnkey-mattermost-15.1 (1) turnkey; urgency=low
+
+  * Updated Mattermost to latest upstream (5.2.1)
+
+  * Inithook bug fix - closes #1189:
+    
+    - add default scheme (https) to domain if scheme not included.
+    - force DEFAULT_DOMAIN (www.example.com) if domain not set.
+
+  * Update build code to always download and install latest version.
+
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Tue, 04 Sep 2018 12:11:08 +1000
+
 turnkey-mattermost-15.0 (1) turnkey; urgency=low
 
   * Updated Mattermost to latest upstream (5.1.0)
