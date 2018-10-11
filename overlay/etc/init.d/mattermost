@@ -15,7 +15,7 @@ NAME=mattermost
 MATTERMOST_ROOT=/opt/mattermost
 MATTERMOST_GROUP=mattermost
 MATTERMOST_USER=mattermost
-DAEMON="$MATTERMOST_ROOT/bin/platform"
+DAEMON="$MATTERMOST_ROOT/bin/mattermost"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
