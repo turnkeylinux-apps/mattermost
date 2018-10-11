@@ -45,7 +45,6 @@ sed -i 's|"SendEmailNotifications": false|"SendEmailNotifications": true|' $CONF
 
 cd $INSTALL_DIR/bin
 su -c "./mattermost user create --email=\"$ADMIN_EMAIL\" --password=\"$ADMIN_PASS\" --username=\"$ADMIN_USER\" --system_admin" $USER
-#su -c "./platform roles system_admin" $USER 
 
 # add conf and log symlinks (convenience)
 ln -s $INSTALL_DIR/config /etc/mattermost
