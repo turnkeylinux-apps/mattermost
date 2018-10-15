@@ -1,6 +1,9 @@
 turnkey-mattermost-15.1 (1) turnkey; urgency=low
 
-  * Updated Mattermost to latest upstream (5.2.1)
+  * Updated Mattermost to latest upstream (5.3.1)
+
+  * Fix deprecated bin platform use in build and init script.
+    [ https://github.com/jeff-dagenais ]
 
   * Inithook bug fix - closes #1189:
     
@@ -9,7 +12,7 @@ turnkey-mattermost-15.1 (1) turnkey; urgency=low
 
   * Update build code to always download and install latest version.
 
- -- Jeremy Davis <jeremy@turnkeylinux.org>  Tue, 04 Sep 2018 12:11:08 +1000
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Mon, 15 Oct 2018 11:32:51 +1100
 
 turnkey-mattermost-15.0 (1) turnkey; urgency=low
 
