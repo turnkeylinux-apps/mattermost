@@ -1,3 +1,9 @@
+turnkey-mattermost-15.2 (1) turnkey; urgency=low
+
+  * Updated Mattermost to latest upstream (5.6.0).
+
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Mon, 17 Dec 2018 13:17:34 +1100
+
 turnkey-mattermost-15.1 (1) turnkey; urgency=low
 
   * Updated Mattermost to latest upstream (5.3.1)
