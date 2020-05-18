@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """Set Mattermost admin user, password, email, and team name
 Option:
     --pass=     unless provided, will ask interactively
@@ -13,14 +13,14 @@ import inithooks_cache
 
 from dialog_wrapper import Dialog
 from pgsqlconf import PostgreSQL
-from executil import system
+import subprocess
 import bcrypt
 
 def usage(s=None):
     if s:
-        print >> sys.stderr, "Error:", s
-    print >> sys.stderr, "Syntax: %s [options]" % sys.argv[0]
-    print >> sys.stderr, __doc__
+        print("Error:", s, file=sys.stderr)
+    print("Syntax: %s [options]" % sys.argv[0], file=sys.stderr)
+    print(__doc__, file=sys.stderr)
     sys.exit(1)
 
 DEFAULT_DOMAIN="www.example.com"
@@ -29,7 +29,7 @@ def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
                                        ['help', 'pass=', 'email=', 'domain='])
-    except getopt.GetoptError, e:
+    except getopt.GetoptError as e:
         usage(e)
 
     password = ""
@@ -79,13 +79,16 @@ def main():
     if not domain.startswith('https://') and not domain.startswith('http://'):
         domain = 'https://'+domain
 
-    system('sed -i "/SiteURL/ s|\\":.*|\\": \\\"%s\\\",|" /opt/mattermost/config/config.json' % domain)
+    subprocess.run([
+        'sed', '-i', "/SiteURL/ s|\":.*|\": \\\"%s\\\",|" % domain,
+        '/opt/mattermost/config/config.json'])
 
     salt = bcrypt.gensalt()
-    hashpass = bcrypt.hashpw(password, salt)
+    hashpass = bcrypt.hashpw(password.encode('utf8'), salt).decode('utf8')
 
     p = PostgreSQL(database='mattermost')
-    p.execute('UPDATE users SET password=\'%s\', email=\'%s\' WHERE username=\'admin\';' % (hashpass, email))
+    p.execute(("UPDATE users SET password='%s', email='%s' WHERE username='admin';" %
+        (hashpass, email)).encode('utf8'))
 
 if __name__ == "__main__":
     main()
