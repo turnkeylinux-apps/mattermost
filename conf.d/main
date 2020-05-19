@@ -2,7 +2,7 @@
 
 USER=mattermost
 ADMIN_USER=admin
-ADMIN_PASS=turnkey
+ADMIN_PASS=TurnkeyLinux1!
 ADMIN_EMAIL=admin@example.com
 DB_NAME=mattermost
 DB_PASS=$(mcookie)
