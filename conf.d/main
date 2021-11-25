@@ -13,7 +13,6 @@ CONF=$INSTALL_DIR/config/config.json
 
 # start services required for mattermost
 service postgresql start
-service postfix start
 
 # create db
 psql postgres -c "CREATE DATABASE $DB_NAME;"
@@ -26,7 +25,7 @@ mkdir -p $INSTALL_DIR/data
 useradd -r $USER -U
 chown -R $USER:$USER $INSTALL_DIR
 chmod -R g+w $INSTALL_DIR
-
+service postfix start
 # enable services
 update-rc.d php-fastcgi defaults
 systemctl enable mattermost
@@ -42,9 +41,17 @@ sed -i '/HelpLink/ s|:.*|: "https://www.turnkeylinux.org/forum",|' $CONF
 sed -i 's|"SMTPServer": "",|"SMTPServer": "localhost",|' $CONF
 sed -i 's|"SMTPPort": "",|"SMTPPort": "25",|' $CONF
 sed -i 's|"SendEmailNotifications": false|"SendEmailNotifications": true|' $CONF
+sed -i 's|"EnableLocalMode": false|"EnableLocalMode": true|' $CONF
+
+service mattermost start
+
+sleep 30
+
+chown mattermost:mattermost /var/tmp/mattermost_local.socket
 
 cd $INSTALL_DIR/bin
-su -c "./mattermost user create --email=\"$ADMIN_EMAIL\" --password=\"$ADMIN_PASS\" --username=\"$ADMIN_USER\" --system_admin" $USER
+#su -c "./mmctl auth set local-server --config $CONF" $USER
+su -c "./mmctl user create --email \"$ADMIN_EMAIL\" --password \"$ADMIN_PASS\" --username \"$ADMIN_USER\" --config-path $CONF --local --system_admin true" $USER
 
 # add conf and log symlinks (convenience)
 ln -s $INSTALL_DIR/config /etc/mattermost
@@ -55,5 +62,8 @@ rm /etc/nginx/sites-enabled/default
 ln -s /etc/nginx/sites-available/mattermost /etc/nginx/sites-enabled/mattermost
 
 # Stop services
+service mattermost stop
+
+rm /var/tmp/mattermost_local.socket
 service postgresql stop
 service postfix stop
