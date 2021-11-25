@@ -13,6 +13,7 @@ CONF=$INSTALL_DIR/config/config.json
 
 # start services required for mattermost
 service postgresql start
+service postfix start
 
 # create db
 psql postgres -c "CREATE DATABASE $DB_NAME;"
@@ -25,7 +26,7 @@ mkdir -p $INSTALL_DIR/data
 useradd -r $USER -U
 chown -R $USER:$USER $INSTALL_DIR
 chmod -R g+w $INSTALL_DIR
-service postfix start
+
 # enable services
 update-rc.d php-fastcgi defaults
 systemctl enable mattermost
