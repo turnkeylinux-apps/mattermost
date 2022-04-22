@@ -58,7 +58,7 @@ ln -s $INSTALL_DIR/config /etc/mattermost
 ln -s $INSTALL_DIR/logs /var/log/mattermost
 
 #confs for nginx
-rm /etc/nginx/sites-enabled/default
+rm /etc/nginx/sites-enabled/tkl-default
 ln -s /etc/nginx/sites-available/mattermost /etc/nginx/sites-enabled/mattermost
 
 # Stop services

@@ -5,7 +5,7 @@ server {
 
 server {
     listen 443 ssl;
-    include /etc/nginx/include/ssl;
+    include /etc/nginx/snippets/ssl.conf;
 
     location / {
         client_max_body_size 50M;
