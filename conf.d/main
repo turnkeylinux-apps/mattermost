@@ -28,7 +28,6 @@ chown -R $USER:$USER $INSTALL_DIR
 chmod -R g+w $INSTALL_DIR
 
 # enable services
-update-rc.d php-fastcgi defaults
 systemctl enable mattermost
 
 # config mattermost
