@@ -9,12 +9,14 @@ Option:
 import re
 import sys
 import getopt
-import inithooks_cache
-
-from dialog_wrapper import Dialog
-from pgsqlconf import PostgreSQL
 import subprocess
+
 import bcrypt
+
+from pgsqlconf import PostgreSQL
+from libinithooks import inithooks_cache
+from libinithooks.dialog_wrapper import Dialog
+
 
 def usage(s=None):
     if s:
