@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/bash -ex
 
 USER=mattermost
 ADMIN_USER=admin
@@ -18,7 +18,8 @@ service postfix start
 # create db
 psql postgres -c "CREATE DATABASE $DB_NAME;"
 psql postgres -c "CREATE USER $USER WITH PASSWORD '$DB_PASS';"
-psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME to $USER;"
+psql postgres -c "ALTER DATABASE $DB_NAME OWNER TO $USER;"
+psql postgres -c "GRANT USAGE, CREATE ON SCHEMA PUBLIC TO $USER;"
 
 tar -zxf $SRC -C $(dirname $INSTALL_DIR)
 rm -f $SRC
@@ -31,7 +32,7 @@ chmod -R g+w $INSTALL_DIR
 systemctl enable mattermost
 
 # config mattermost
-MM_SERVER="postgres://${USER}:${DB_PASS}@127.0.0.1:5432/mattermost?sslmode=disable\\\\u0026connect_timeout=10"
+MM_SERVER="postgres://${USER}:${DB_PASS}@127.0.0.1:5432/mattermost?sslmode=disable"
 sed -i "/DriverName/ s|mysql|postgres|" $CONF
 sed -i "/DataSource/ s|DataSource\": \".*|DataSource\": \"$MM_SERVER\",|" $CONF
 sed -i '/ListenAddress/ s| ":| "127.0.0.1:|' $CONF
@@ -43,15 +44,26 @@ sed -i 's|"SMTPPort": "",|"SMTPPort": "25",|' $CONF
 sed -i 's|"SendEmailNotifications": false|"SendEmailNotifications": true|' $CONF
 sed -i 's|"EnableLocalMode": false|"EnableLocalMode": true|' $CONF
 
-service mattermost start
+cd "$INSTALL_DIR/"
 
-sleep 30
+su mattermost -c "bin/mattermost db migrate"
+su - mattermost -s /bin/bash -c 'bin/mattermost& echo $! >/tmp/mattermost_pid'
+mattermost_pid=$(cat /tmp/mattermost_pid)
+rm /tmp/mattermost_pid
 
+cd /
+
+for i in {0..10}; do
+    if [[ -S /var/tmp/mattermost_local.socket ]]; then
+        break
+    fi
+    sleep 5
+done
 chown mattermost:mattermost /var/tmp/mattermost_local.socket
 
 cd $INSTALL_DIR/bin
 #su -c "./mmctl auth set local-server --config $CONF" $USER
-su -c "./mmctl user create --email \"$ADMIN_EMAIL\" --password \"$ADMIN_PASS\" --username \"$ADMIN_USER\" --config-path $CONF --local --system_admin true" $USER
+su -c "./mmctl user create --email \"$ADMIN_EMAIL\" --password \"$ADMIN_PASS\" --username \"$ADMIN_USER\" --config-path $CONF --local --system-admin true" $USER
 
 # add conf and log symlinks (convenience)
 ln -s $INSTALL_DIR/config /etc/mattermost
@@ -62,8 +74,11 @@ rm /etc/nginx/sites-enabled/tkl-default
 ln -s /etc/nginx/sites-available/mattermost /etc/nginx/sites-enabled/mattermost
 
 # Stop services
-service mattermost stop
+kill $mattermost_pid
+while ps aux | grep -q $mattermost_pid | grep -q -v 'grep'; do
+    sleep 5
+done
 
-rm /var/tmp/mattermost_local.socket
+rm -f /var/tmp/mattermost_local.socket
 service postgresql stop
 service postfix stop
