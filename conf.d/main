@@ -1,5 +1,7 @@
 #!/bin/bash -ex
 
+. /usr/local/src/tkl-bashlib/init.sh
+
 USER=mattermost
 ADMIN_USER=admin
 ADMIN_PASS=TurnkeyLinux1!
@@ -53,16 +55,10 @@ rm /tmp/mattermost_pid
 
 cd /
 
-for i in {0..10}; do
-    if [[ -S /var/tmp/mattermost_local.socket ]]; then
-        break
-    fi
-    sleep 5
-done
+wait_until_ok 'test -S /var/tmp/mattermost_local.socket' 10 20
 chown mattermost:mattermost /var/tmp/mattermost_local.socket
 
 cd $INSTALL_DIR/bin
-#su -c "./mmctl auth set local-server --config $CONF" $USER
 su -c "./mmctl user create --email \"$ADMIN_EMAIL\" --password \"$ADMIN_PASS\" --username \"$ADMIN_USER\" --config-path $CONF --local --system-admin true" $USER
 
 # add conf and log symlinks (convenience)
@@ -75,9 +71,7 @@ ln -s /etc/nginx/sites-available/mattermost /etc/nginx/sites-enabled/mattermost
 
 # Stop services
 kill $mattermost_pid
-while ps aux | grep -q $mattermost_pid | grep -q -v 'grep'; do
-    sleep 5
-done
+wait_until_dead "$mattermost_pid" 5 10
 
 rm -f /var/tmp/mattermost_local.socket
 service postgresql stop
