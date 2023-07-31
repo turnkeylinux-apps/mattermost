@@ -1,3 +1,11 @@
+turnkey-mattermost-18.0 (1) turnkey; urgency=low
+
+  * Proper changelog needed...
+
+  * Updated Mattermost to latest upstream: XXXX
+
+ -- Stefan Davis <stefan@turnkeylinux.org>  Tue, 31 Jul 2023 22:28:28 +0000
+
 turnkey-mattermost-17.2 (1) turnkey; urgency=low
 
   * Updated Mattermost to latest upstream: v7.7.1.
