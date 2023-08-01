@@ -46,26 +46,21 @@ sed -i '/"SMTPPort":/ s|:.*|: "25",|' $CONF
 sed -i '/"SendEmailNotifications":/ s|:.*|: true,|' $CONF
 sed -i '/"EnableLocalMode":/ s|:.*|: true,|' $CONF
 
-cd "$INSTALL_DIR/"
-
-su mattermost -c "bin/mattermost db migrate"
-su - mattermost -s /bin/bash -c 'bin/mattermost& echo $! >/tmp/mattermost_pid'
-mattermost_pid=$(cat /tmp/mattermost_pid)
-rm /tmp/mattermost_pid
-
-cd /
+turnkey-mattermost db migrate
+mattermost_pid=$(turnkey-mattermost& echo $!)
+[[ -n "$mattermost_pid" ]] || fatal "no MM pid..."
 
 wait_until_ok 'test -S /var/tmp/mattermost_local.socket' 10 20
 chown mattermost:mattermost /var/tmp/mattermost_local.socket
 
-cd $INSTALL_DIR/bin
-su -c "./mmctl user create --email \"$ADMIN_EMAIL\" --password \"$ADMIN_PASS\" --username \"$ADMIN_USER\" --config-path $CONF --local --system-admin true" $USER
+
+turnkey-mmctl user create --email "$ADMIN_EMAIL" --password "$ADMIN_PASS" --username "$ADMIN_USER" --config-path "$CONF" --local --system-admin true
 
 # add conf and log symlinks (convenience)
 ln -s $INSTALL_DIR/config /etc/mattermost
 ln -s $INSTALL_DIR/logs /var/log/mattermost
 
-#confs for nginx
+# confs for nginx
 rm /etc/nginx/sites-enabled/tkl-default
 ln -s /etc/nginx/sites-available/mattermost /etc/nginx/sites-enabled/mattermost
 
