@@ -30,7 +30,8 @@ EOF
 fi
 
 if [[ -x "$CLI" ]]; then
-    runuser $MM_USER -s /bin/bash -c "$CLI $@"
+    COM="$@"
+    runuser $MM_USER -s /bin/bash -c "$CLI $COM"
 else
     fatal "Script does not exist or is non executable: $CLI"
 fi
