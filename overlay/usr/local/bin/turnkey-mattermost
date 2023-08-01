@@ -4,7 +4,7 @@ fatal() { echo "FATAL: $@" >&2; exit 1; }
 
 [[ -z "$DEBUG" ]] || set -x
 
-export MM_USER="${MM_USER:-matermost}"
+export MM_USER="${MM_USER:-mattermost}"
 CLI=/opt/mattermost/bin/mattermost
 
 if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
