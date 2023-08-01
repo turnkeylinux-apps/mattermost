@@ -46,13 +46,12 @@ sed -i '/"SMTPPort":/ s|:.*|: "25",|' $CONF
 sed -i '/"SendEmailNotifications":/ s|:.*|: true,|' $CONF
 sed -i '/"EnableLocalMode":/ s|:.*|: true,|' $CONF
 
-turnkey-mattermost db migrate
-mattermost_pid=$(turnkey-mattermost& echo $!)
-[[ -n "$mattermost_pid" ]] || fatal "no MM pid..."
+su mattermost -s /bin/bash -c '/opt/mattermost/bin/mattermost db migrate'
+su mattermost -s /bin/bash -c '/opt/mattermost/bin/mattermost& echo $! >/tmp/mattermost_pid'
+[[ -f "/tmp/mattermost_pid" ]] || fatal "no MM pid..."
 
 wait_until_ok 'test -S /var/tmp/mattermost_local.socket' 10 20
 chown mattermost:mattermost /var/tmp/mattermost_local.socket
-
 
 turnkey-mmctl user create --email "$ADMIN_EMAIL" --password "$ADMIN_PASS" --username "$ADMIN_USER" --config-path "$CONF" --local --system-admin true
 
@@ -64,10 +63,11 @@ ln -s $INSTALL_DIR/logs /var/log/mattermost
 rm /etc/nginx/sites-enabled/tkl-default
 ln -s /etc/nginx/sites-available/mattermost /etc/nginx/sites-enabled/mattermost
 
-# Stop services
+# Stop services & cleanup
+mattermost_pid=$(cat /tmp/mattermost_pid)
 kill $mattermost_pid
 wait_until_dead "$mattermost_pid" 5 10
 
-rm -f /var/tmp/mattermost_local.socket
+rm -f /tmp/mattermost_pid  /var/tmp/mattermost_local.socket
 service postgresql stop
 service postfix stop
