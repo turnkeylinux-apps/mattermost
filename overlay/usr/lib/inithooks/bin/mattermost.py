@@ -92,6 +92,9 @@ def main():
     p.execute(("UPDATE users SET password='%s', email='%s' WHERE username='admin';" %
         (hashpass, email)).encode('utf8'))
 
+    print("Please wait while Mattermost is restarted...")
+    subprocess.run(['systemctl', 'restart', 'mattermost'])
+
 
 if __name__ == "__main__":
     main()
