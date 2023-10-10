@@ -4,7 +4,7 @@ nginx
 
 postgresql
 postgresql-contrib
-postgresql-13-postgis-3
+postgis
 
 python3-bcrypt
 

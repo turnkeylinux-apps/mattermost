@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+fatal() { echo "FATAL: $@" >&2; exit 1; }
+
+[[ -z "$DEBUG" ]] || set -x
+
+export MM_USER="${MM_USER:-mattermost}"
+CLI=/opt/mattermost/bin/mmctl
+
+if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+    cat <<EOF
+$(basename $0) [-h|--help] [ARGS]
+
+Run mattermost mmctl cli tool ($CLI) as an alternate user ($MM_USER).
+
+Arguments:
+
+    ARGS        arguments/options to pass to mmctl tool
+
+Options:
+
+    -h|--help   Show this help and exit
+
+Env vars:
+
+    MM_USER     Linux user to run mattermost cli with
+    DEBUG       Verbose output - for debugging
+
+EOF
+fi
+
+if [[ -x "$CLI" ]]; then
+    COM="$@"
+    runuser $MM_USER -s /bin/bash -c "$CLI $COM"
+else
+    fatal "Script does not exist or is non executable: $CLI"
+fi

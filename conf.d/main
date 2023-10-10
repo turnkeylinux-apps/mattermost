@@ -1,4 +1,6 @@
-#!/bin/sh -ex
+#!/bin/bash -ex
+
+. /usr/local/src/tkl-bashlib/init.sh
 
 USER=mattermost
 ADMIN_USER=admin
@@ -18,7 +20,8 @@ service postfix start
 # create db
 psql postgres -c "CREATE DATABASE $DB_NAME;"
 psql postgres -c "CREATE USER $USER WITH PASSWORD '$DB_PASS';"
-psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME to $USER;"
+psql postgres -c "ALTER DATABASE $DB_NAME OWNER TO $USER;"
+psql postgres -c "GRANT USAGE, CREATE ON SCHEMA PUBLIC TO $USER;"
 
 tar -zxf $SRC -C $(dirname $INSTALL_DIR)
 rm -f $SRC
@@ -31,39 +34,40 @@ chmod -R g+w $INSTALL_DIR
 systemctl enable mattermost
 
 # config mattermost
-MM_SERVER="postgres://${USER}:${DB_PASS}@127.0.0.1:5432/mattermost?sslmode=disable\\\\u0026connect_timeout=10"
-sed -i "/DriverName/ s|mysql|postgres|" $CONF
-sed -i "/DataSource/ s|DataSource\": \".*|DataSource\": \"$MM_SERVER\",|" $CONF
-sed -i '/ListenAddress/ s| ":| "127.0.0.1:|' $CONF
-sed -i '/SiteName/ s|:.*|: "TurnKey Mattermost",|' $CONF
-sed -i '/AboutLink/ s|:.*|: "https://www.turnkeylinux.org/mattermost",|' $CONF
-sed -i '/HelpLink/ s|:.*|: "https://www.turnkeylinux.org/forum",|' $CONF
-sed -i 's|"SMTPServer": "",|"SMTPServer": "localhost",|' $CONF
-sed -i 's|"SMTPPort": "",|"SMTPPort": "25",|' $CONF
-sed -i 's|"SendEmailNotifications": false|"SendEmailNotifications": true|' $CONF
-sed -i 's|"EnableLocalMode": false|"EnableLocalMode": true|' $CONF
+MM_SERVER="postgres://${USER}:${DB_PASS}@127.0.0.1:5432/mattermost?sslmode=disable"
+sed -i '/"DriverName":/ s|mysql|postgres|' $CONF
+sed -i "0,/\"DataSource\": / s|DataSource\": \".*|DataSource\": \"$MM_SERVER\",|" $CONF
+sed -i '/"ListenAddress":/ s| ":| "127.0.0.1:|' $CONF # prefix port to bind to localhost
+sed -i '/"SiteName":/ s|:.*|: "TurnKey Mattermost",|' $CONF
+sed -i '/"AboutLink":/ s|:.*|: "https://www.turnkeylinux.org/mattermost",|' $CONF
+sed -i '/"HelpLink":/ s|:.*|: "https://www.turnkeylinux.org/forum",|' $CONF
+sed -i '/"SMTPServer":/ s|:.*|: "localhost",|' $CONF
+sed -i '/"SMTPPort":/ s|:.*|: "25",|' $CONF
+sed -i '/"SendEmailNotifications":/ s|:.*|: true,|' $CONF
+sed -i '/"EnableLocalMode":/ s|:.*|: true,|' $CONF
 
-service mattermost start
+su mattermost -s /bin/bash -c '/opt/mattermost/bin/mattermost db migrate'
+su mattermost -s /bin/bash -c '/opt/mattermost/bin/mattermost& echo $! >/tmp/mattermost_pid'
+[[ -f "/tmp/mattermost_pid" ]] || fatal "no MM pid..."
 
-sleep 30
-
+wait_until_ok 'test -S /var/tmp/mattermost_local.socket' 10 20
 chown mattermost:mattermost /var/tmp/mattermost_local.socket
 
-cd $INSTALL_DIR/bin
-#su -c "./mmctl auth set local-server --config $CONF" $USER
-su -c "./mmctl user create --email \"$ADMIN_EMAIL\" --password \"$ADMIN_PASS\" --username \"$ADMIN_USER\" --config-path $CONF --local --system_admin true" $USER
+turnkey-mmctl user create --email "$ADMIN_EMAIL" --password "$ADMIN_PASS" --username "$ADMIN_USER" --config-path "$CONF" --local --system-admin true
 
 # add conf and log symlinks (convenience)
 ln -s $INSTALL_DIR/config /etc/mattermost
 ln -s $INSTALL_DIR/logs /var/log/mattermost
 
-#confs for nginx
+# confs for nginx
 rm /etc/nginx/sites-enabled/tkl-default
 ln -s /etc/nginx/sites-available/mattermost /etc/nginx/sites-enabled/mattermost
 
-# Stop services
-service mattermost stop
+# Stop services & cleanup
+mattermost_pid=$(cat /tmp/mattermost_pid)
+kill $mattermost_pid
+wait_until_dead "$mattermost_pid" 5 10
 
-rm /var/tmp/mattermost_local.socket
+rm -f /tmp/mattermost_pid  /var/tmp/mattermost_local.socket
 service postgresql stop
 service postfix stop

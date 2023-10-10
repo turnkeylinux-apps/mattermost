@@ -10,7 +10,6 @@ import re
 import sys
 import getopt
 import subprocess
-
 import bcrypt
 
 from pgsqlconf import PostgreSQL
@@ -26,6 +25,7 @@ def usage(s=None):
     sys.exit(1)
 
 DEFAULT_DOMAIN="www.example.com"
+
 
 def main():
     try:
@@ -82,7 +82,7 @@ def main():
         domain = 'https://'+domain
 
     subprocess.run([
-        'sed', '-i', "/SiteURL/ s|\":.*|\": \\\"%s\\\",|" % domain,
+        'sed', '-i', f'/SiteURL/ s|":.*|": "{domain}",|',
         '/opt/mattermost/config/config.json'])
 
     salt = bcrypt.gensalt()
@@ -91,6 +91,10 @@ def main():
     p = PostgreSQL(database='mattermost')
     p.execute(("UPDATE users SET password='%s', email='%s' WHERE username='admin';" %
         (hashpass, email)).encode('utf8'))
+
+    print("Please wait while Mattermost is restarted...")
+    subprocess.run(['systemctl', 'restart', 'mattermost'])
+
 
 if __name__ == "__main__":
     main()
