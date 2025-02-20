@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-fatal() { echo "FATAL: $@" >&2; exit 1; }
+fatal() { echo "FATAL: $*" >&2; exit 1; }
 
 [[ -z "$DEBUG" ]] || set -x
 
@@ -9,7 +9,7 @@ CLI=/opt/mattermost/bin/mmctl
 
 if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
     cat <<EOF
-$(basename $0) [-h|--help] [ARGS]
+$(basename "$0") [-h|--help] [ARGS]
 
 Run mattermost mmctl cli tool ($CLI) as an alternate user ($MM_USER).
 
@@ -29,9 +29,15 @@ Env vars:
 EOF
 fi
 
+extra_args=""
+
+if [[ ! " $* " =~ [[:space:]]--local[[:space:]] ]]; then
+    extra_args="--local"
+fi
+
 if [[ -x "$CLI" ]]; then
-    COM="$@"
-    runuser $MM_USER -s /bin/bash -c "$CLI $COM"
+    COM="$*"
+    runuser "$MM_USER" -s /bin/bash -c "$CLI $extra_args $COM"
 else
     fatal "Script does not exist or is non executable: $CLI"
 fi
