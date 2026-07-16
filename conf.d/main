@@ -15,7 +15,7 @@ CONF=$INSTALL_DIR/config/config.json
 
 # start services required for mattermost
 service postgresql start
-service postfix start
+postfix start
 
 # create db
 psql postgres -c "CREATE DATABASE $DB_NAME;"
@@ -53,7 +53,7 @@ su mattermost -s /bin/bash -c '/opt/mattermost/bin/mattermost& echo $! >/tmp/mat
 wait_until_ok 'test -S /var/tmp/mattermost_local.socket' 10 20
 chown mattermost:mattermost /var/tmp/mattermost_local.socket
 
-turnkey-mmctl user create --email "$ADMIN_EMAIL" --password "$ADMIN_PASS" --username "$ADMIN_USER" --config-path "$CONF" --local --system-admin true
+turnkey-mmctl user create --email "$ADMIN_EMAIL" --password "$ADMIN_PASS" --username "$ADMIN_USER" --config "$CONF" --local --system-admin true
 
 # add conf and log symlinks (convenience)
 ln -s $INSTALL_DIR/config /etc/mattermost
@@ -70,4 +70,4 @@ wait_until_dead "$mattermost_pid" 5 10
 
 rm -f /tmp/mattermost_pid  /var/tmp/mattermost_local.socket
 service postgresql stop
-service postfix stop
+postfix stop
