@@ -1,3 +1,9 @@
+turnkey-mattermost-19.0 (1) turnkey; urgency=low
+
+  * Updated Mattermost to latest upstream: v11.8.3.
+
+ -- Stefan Davis <nafets.sivad@gmail.com>  Thu, 16 Jul 2026 05:17:01 +0000
+
 turnkey-mattermost-18.0 (1) turnkey; urgency=low
 
   * Updated Mattermost to latest upstream: v9.0.1.
