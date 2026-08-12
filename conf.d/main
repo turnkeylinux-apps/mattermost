@@ -3,7 +3,7 @@
 . /usr/local/src/tkl-bashlib/init.sh
 
 USER=mattermost
-ADMIN_USER=admin
+ADMIN_USER="admin"
 ADMIN_PASS=TurnkeyLinux1!
 ADMIN_EMAIL=admin@example.com
 DB_NAME=mattermost
@@ -15,7 +15,7 @@ CONF=$INSTALL_DIR/config/config.json
 
 # start services required for mattermost
 service postgresql start
-service postfix start
+postfix start
 
 # create db
 psql postgres -c "CREATE DATABASE $DB_NAME;"
@@ -23,8 +23,8 @@ psql postgres -c "CREATE USER $USER WITH PASSWORD '$DB_PASS';"
 psql postgres -c "ALTER DATABASE $DB_NAME OWNER TO $USER;"
 psql postgres -c "GRANT USAGE, CREATE ON SCHEMA PUBLIC TO $USER;"
 
-tar -zxf $SRC -C $(dirname $INSTALL_DIR)
-rm -f $SRC
+tar -zxf "$SRC" -C "$(dirname $INSTALL_DIR)"
+rm -f "$SRC"
 mkdir -p $INSTALL_DIR/data
 useradd -r $USER -U
 chown -R $USER:$USER $INSTALL_DIR
@@ -53,11 +53,12 @@ su mattermost -s /bin/bash -c '/opt/mattermost/bin/mattermost& echo $! >/tmp/mat
 wait_until_ok 'test -S /var/tmp/mattermost_local.socket' 10 20
 chown mattermost:mattermost /var/tmp/mattermost_local.socket
 
-turnkey-mmctl user create    \
-    --email "$ADMIN_EMAIL"   \
+turnkey-mmctl user create \
+    --email "$ADMIN_EMAIL" \
     --password "$ADMIN_PASS" \
     --username "$ADMIN_USER" \
-    --local                  \
+    --config "$CONF" \
+    --local \
     --system-admin true
 
 # add conf and log symlinks (convenience)
@@ -70,9 +71,9 @@ ln -s /etc/nginx/sites-available/mattermost /etc/nginx/sites-enabled/mattermost
 
 # Stop services & cleanup
 mattermost_pid=$(cat /tmp/mattermost_pid)
-kill $mattermost_pid
+kill "$mattermost_pid"
 wait_until_dead "$mattermost_pid" 5 10
 
 rm -f /tmp/mattermost_pid  /var/tmp/mattermost_local.socket
 service postgresql stop
-service postfix stop
+postfix stop
