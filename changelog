@@ -1,3 +1,8 @@
+turnkey-mattermost-18.1 (1) turnkey; urgency=low
+
+  * Updated Mattermost to latest upstream: v11.3.1 as of today
+    [ Daniele Lolli <github@uncledan.it> ]
+
 turnkey-mattermost-18.0 (1) turnkey; urgency=low
 
   * Updated Mattermost to latest upstream: v9.0.1.
