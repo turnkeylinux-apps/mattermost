@@ -8,7 +8,7 @@ ADMIN_PASS=TurnkeyLinux1!
 ADMIN_EMAIL=admin@example.com
 DB_NAME=mattermost
 DB_PASS=$(mcookie)
-SRC=/usr/local/src/mattermost-team-*-linux-amd64.tar.gz
+SRC=(/usr/local/src/mattermost-team-*-linux-amd64.tar.gz)
 
 INSTALL_DIR=/opt/mattermost
 CONF=$INSTALL_DIR/config/config.json
@@ -23,8 +23,8 @@ psql postgres -c "CREATE USER $USER WITH PASSWORD '$DB_PASS';"
 psql postgres -c "ALTER DATABASE $DB_NAME OWNER TO $USER;"
 psql postgres -c "GRANT USAGE, CREATE ON SCHEMA PUBLIC TO $USER;"
 
-tar -zxf "$SRC" -C "$(dirname $INSTALL_DIR)"
-rm -f "$SRC"
+tar -zxf "${SRC[*]}" -C "$(dirname $INSTALL_DIR)"
+rm -f "${SRC[*]}"
 mkdir -p $INSTALL_DIR/data
 useradd -r $USER -U
 chown -R $USER:$USER $INSTALL_DIR
