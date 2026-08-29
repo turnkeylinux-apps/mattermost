@@ -2,6 +2,8 @@
 """Set Mattermost admin user, password, email, and team name
 Option:
     --pass=     unless provided, will ask interactively
+    --pass-stdin
+                read the password from standard input
     --email=    unless provided, will ask interactively
     --domain=   unless provided, will ask interactively
 """
@@ -29,8 +31,9 @@ DEFAULT_DOMAIN="www.example.com"
 
 def main():
     try:
-        opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
-                                       ['help', 'pass=', 'email=', 'domain='])
+        opts, args = getopt.gnu_getopt(
+            sys.argv[1:], "h",
+            ['help', 'pass=', 'pass-stdin', 'email=', 'domain='])
     except getopt.GetoptError as e:
         usage(e)
 
@@ -43,6 +46,8 @@ def main():
             usage()
         elif opt == '--pass':
             password = val
+        elif opt == '--pass-stdin':
+            password = sys.stdin.readline().rstrip('\r\n')
         elif opt == '--email':
             email = val
         elif opt == '--domain':

@@ -60,8 +60,9 @@ sed -i '/"SendEmailNotifications":/ s|:.*|: true,|' $CONF
 sed -i '/"EnableLocalMode":/ s|:.*|: true,|' $CONF
 
 su mattermost -s /bin/bash -c '/opt/mattermost/bin/mattermost db migrate'
-su mattermost -s /bin/bash -c '/opt/mattermost/bin/mattermost& echo $! >/tmp/mattermost_pid'
-[[ -f "/tmp/mattermost_pid" ]] || fatal "no MM pid..."
+install -d -o mattermost -g mattermost -m 0750 /run/mattermost-build
+su mattermost -s /bin/bash -c '/opt/mattermost/bin/mattermost& echo $! >/run/mattermost-build/pid'
+[[ -f "/run/mattermost-build/pid" ]] || fatal "no MM pid..."
 
 wait_until_ok 'test -S /var/tmp/mattermost_local.socket' 10 20
 chown mattermost:mattermost /var/tmp/mattermost_local.socket
@@ -83,10 +84,11 @@ rm /etc/nginx/sites-enabled/tkl-default
 ln -s /etc/nginx/sites-available/mattermost /etc/nginx/sites-enabled/mattermost
 
 # Stop services & cleanup
-mattermost_pid=$(cat /tmp/mattermost_pid)
+mattermost_pid=$(cat /run/mattermost-build/pid)
 kill "$mattermost_pid"
 wait_until_dead "$mattermost_pid" 5 10
 
-rm -f /tmp/mattermost_pid  /var/tmp/mattermost_local.socket
+rm -f /run/mattermost-build/pid /var/tmp/mattermost_local.socket
+rmdir /run/mattermost-build
 service postgresql stop
 postfix stop

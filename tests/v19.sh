@@ -33,11 +33,21 @@ runuser -u mattermost -- test ! -w /opt/mattermost/config/config.json
 runuser -u mattermost -- touch /opt/mattermost/data/.tkl-v19-write-test
 runuser -u mattermost -- rm /opt/mattermost/data/.tkl-v19-write-test
 
-curl -fsS -D "$work/login.headers" -o "$work/login.json" \
-    -H 'Content-Type: application/json' \
-    --data "{\"login_id\":\"admin\",\"password\":\"$password\"}" \
-    "$api/users/login"
-token=$(sed -n 's/^Token:[[:space:]]*//Ip' "$work/login.headers" | tr -d '\r')
+token=$(printf '%s' "$password" | python3 -c '
+import json
+import sys
+import urllib.request
+
+request = urllib.request.Request(
+    sys.argv[1],
+    data=json.dumps({"login_id": "admin", "password": sys.stdin.read()}).encode(),
+    headers={"Content-Type": "application/json"},
+)
+with urllib.request.urlopen(request) as response:
+    body = response.read()
+    open(sys.argv[2], "wb").write(body)
+    print(response.headers["Token"])
+' "$api/users/login" "$work/login.json")
 test -n "$token"
 
 curl -fsS -H "Authorization: Bearer $token" -H 'Content-Type: application/json' \
