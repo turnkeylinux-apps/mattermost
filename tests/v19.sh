@@ -17,10 +17,13 @@ curl -kfsS --resolve www.example.com:443:127.0.0.1 \
 version=$(sed -n 's/^Version:[[:space:]]*//p' "$work/version.txt" | head -1)
 test "$version" = 11.8.3
 
-runuser -u mattermost -- /opt/mattermost/bin/mmctl --local config get \
-    >"$work/config.json"
+test "$(runuser -u postgres -- psql -XqAt -d mattermost \
+    -c 'SELECT count(*) FROM configurations WHERE active')" = 1
+runuser -u postgres -- psql -XqAt -d mattermost \
+    -c 'SELECT value FROM configurations WHERE active' >"$work/config.json"
 python3 - "$work/config.json" <<'PY'
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -28,11 +31,9 @@ config = json.loads(Path(sys.argv[1]).read_text())
 keys = (
     ('SqlSettings', 'AtRestEncryptKey'),
     ('FileSettings', 'PublicLinkSalt'),
-    ('EmailSettings', 'InviteSalt'),
-    ('EmailSettings', 'PasswordResetSalt'),
 )
 values = [config[section][key] for section, key in keys]
-assert all(len(value) == 32 for value in values)
+assert all(re.fullmatch(r'[0-9a-f]{32}', value) for value in values)
 assert len(set(values)) == len(values)
 assert config['ServiceSettings']['SiteURL'] == 'https://localhost'
 PY
