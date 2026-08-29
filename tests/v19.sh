@@ -17,15 +17,24 @@ curl -kfsS --resolve www.example.com:443:127.0.0.1 \
 version=$(sed -n 's/^Version:[[:space:]]*//p' "$work/version.txt" | head -1)
 test "$version" = 11.8.3
 
-python3 - <<'PY'
+runuser -u mattermost -- /opt/mattermost/bin/mmctl --local config get \
+    >"$work/config.json"
+python3 - "$work/config.json" <<'PY'
 import json
+import sys
 from pathlib import Path
 
-config = json.loads(Path('/opt/mattermost/config/config.json').read_text())
-keys = ('AtRestEncryptKey', 'PublicLinkSalt', 'InviteSalt', 'PasswordResetSalt')
-values = [config[key] for key in keys]
+config = json.loads(Path(sys.argv[1]).read_text())
+keys = (
+    ('SqlSettings', 'AtRestEncryptKey'),
+    ('FileSettings', 'PublicLinkSalt'),
+    ('EmailSettings', 'InviteSalt'),
+    ('EmailSettings', 'PasswordResetSalt'),
+)
+values = [config[section][key] for section, key in keys]
 assert all(len(value) == 32 for value in values)
 assert len(set(values)) == len(values)
+assert config['ServiceSettings']['SiteURL'] == 'https://localhost'
 PY
 
 runuser -u mattermost -- test ! -w /opt/mattermost/bin/mattermost

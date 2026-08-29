@@ -87,8 +87,9 @@ def main():
         domain = 'https://'+domain
 
     subprocess.run([
-        'sed', '-i', f'/SiteURL/ s|":.*|": "{domain}",|',
-        '/opt/mattermost/config/config.json'])
+        'runuser', '-u', 'mattermost', '--',
+        '/opt/mattermost/bin/mmctl', '--local', 'config', 'set',
+        'ServiceSettings.SiteURL', domain], check=True)
 
     salt = bcrypt.gensalt()
     hashpass = bcrypt.hashpw(password.encode('utf8'), salt).decode('utf8')
@@ -98,7 +99,7 @@ def main():
         (hashpass, email)).encode('utf8'))
 
     print("Please wait while Mattermost is restarted...")
-    subprocess.run(['systemctl', 'restart', 'mattermost'])
+    subprocess.run(['systemctl', 'restart', 'mattermost'], check=True)
 
 
 if __name__ == "__main__":
