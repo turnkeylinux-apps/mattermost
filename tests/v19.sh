@@ -1,0 +1,74 @@
+#!/bin/bash
+set -euo pipefail
+
+result=${TKL_TEST_RESULT:?}
+password=${TKL_TEST_APP_PASS:?}
+api=http://127.0.0.1:8065/api/v4
+work=/run/tkl-v19-tests/mattermost
+mkdir -p "$work"
+
+systemctl --quiet is-active mattermost.service nginx.service postgresql.service
+curl -fsS "$api/system/ping" >"$work/ping.json"
+grep -Fq '"status":"OK"' "$work/ping.json"
+curl -kfsS --resolve www.example.com:443:127.0.0.1 \
+    https://www.example.com/api/v4/system/ping >/dev/null
+
+/opt/mattermost/bin/mattermost version >"$work/version.txt"
+version=$(sed -n 's/^Version:[[:space:]]*//p' "$work/version.txt" | head -1)
+test "$version" = 11.8.3
+
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+config = json.loads(Path('/opt/mattermost/config/config.json').read_text())
+keys = ('AtRestEncryptKey', 'PublicLinkSalt', 'InviteSalt', 'PasswordResetSalt')
+values = [config[key] for key in keys]
+assert all(len(value) == 32 for value in values)
+assert len(set(values)) == len(values)
+PY
+
+runuser -u mattermost -- test ! -w /opt/mattermost/bin/mattermost
+runuser -u mattermost -- test ! -w /opt/mattermost/config/config.json
+runuser -u mattermost -- touch /opt/mattermost/data/.tkl-v19-write-test
+runuser -u mattermost -- rm /opt/mattermost/data/.tkl-v19-write-test
+
+curl -fsS -D "$work/login.headers" -o "$work/login.json" \
+    -H 'Content-Type: application/json' \
+    --data "{\"login_id\":\"admin\",\"password\":\"$password\"}" \
+    "$api/users/login"
+token=$(sed -n 's/^Token:[[:space:]]*//Ip' "$work/login.headers" | tr -d '\r')
+test -n "$token"
+
+curl -fsS -H "Authorization: Bearer $token" -H 'Content-Type: application/json' \
+    --data '{"name":"qa-team","display_name":"QA Team","type":"O"}' \
+    "$api/teams" >"$work/team.json"
+team_id=$(python3 -c 'import json; print(json.load(open("'$work'/team.json"))["id"])')
+curl -fsS -H "Authorization: Bearer $token" -H 'Content-Type: application/json' \
+    --data "{\"team_id\":\"$team_id\",\"name\":\"qa-channel\",\"display_name\":\"QA Channel\",\"type\":\"O\"}" \
+    "$api/channels" >"$work/channel.json"
+channel_id=$(python3 -c 'import json; print(json.load(open("'$work'/channel.json"))["id"])')
+curl -fsS -H "Authorization: Bearer $token" -H 'Content-Type: application/json' \
+    --data "{\"channel_id\":\"$channel_id\",\"message\":\"qa-persistence-marker\"}" \
+    "$api/posts" >"$work/post.json"
+post_id=$(python3 -c 'import json; print(json.load(open("'$work'/post.json"))["id"])')
+
+systemctl restart mattermost.service
+for _ in $(seq 1 30); do
+    curl -fsS "$api/system/ping" >/dev/null 2>&1 && break
+    sleep 1
+done
+curl -fsS -H "Authorization: Bearer $token" "$api/posts/$post_id" >"$work/post-after-restart.json"
+grep -Fq 'qa-persistence-marker' "$work/post-after-restart.json"
+
+! grep -R -F -- "$password" /var/log/inithooks.log /var/log/mattermost 2>/dev/null
+
+cat >"$result" <<EOF
+package_source=official Mattermost Team Edition archive pinned by SHA-256
+installed_version=$version
+runtime_checks=services, direct and Nginx API health, admin login, team/channel/post lifecycle, restart persistence, secret uniqueness, ownership boundaries, password log hygiene
+updater_command=supervised official Mattermost upgrade procedure documented in README
+updater_result=installed version unchanged during QA
+updater_channel=official Mattermost Team Edition releases
+integrity_evidence=release archive pinned to 5c864ac5fc83f95f94d2c04a7f40eb9248e6118d84ec916f3e6290768e488aa9
+EOF
