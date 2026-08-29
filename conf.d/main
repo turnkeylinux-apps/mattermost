@@ -61,10 +61,13 @@ sed -i '/"EnableLocalMode":/ s|:.*|: true,|' $CONF
 
 su mattermost -s /bin/bash -c '/opt/mattermost/bin/mattermost db migrate'
 install -d -o mattermost -g mattermost -m 0750 /run/mattermost-build
+# Mattermost persists one-time configuration migrations on its first start.
+# Temporarily grant that single file, then restore the final boundary below.
+chown mattermost:mattermost "$CONF"
 su mattermost -s /bin/bash -c '/opt/mattermost/bin/mattermost& echo $! >/run/mattermost-build/pid'
 [[ -f "/run/mattermost-build/pid" ]] || fatal "no MM pid..."
 
-wait_until_ok 'test -S /var/tmp/mattermost_local.socket' 10 20
+wait_until_ok 'test -S /var/tmp/mattermost_local.socket' 2 30
 chown mattermost:mattermost /var/tmp/mattermost_local.socket
 
 turnkey-mmctl user create \
@@ -87,6 +90,8 @@ ln -s /etc/nginx/sites-available/mattermost /etc/nginx/sites-enabled/mattermost
 mattermost_pid=$(cat /run/mattermost-build/pid)
 kill "$mattermost_pid"
 wait_until_dead "$mattermost_pid" 5 10
+chown root:mattermost "$CONF"
+chmod 0640 "$CONF"
 
 rm -f /run/mattermost-build/pid /var/tmp/mattermost_local.socket
 rmdir /run/mattermost-build
