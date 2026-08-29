@@ -29,7 +29,8 @@ assert len(set(values)) == len(values)
 PY
 
 runuser -u mattermost -- test ! -w /opt/mattermost/bin/mattermost
-runuser -u mattermost -- test ! -w /opt/mattermost/config/config.json
+runuser -u mattermost -- test ! -w /opt/mattermost/config
+test "$(stat -c '%U:%G %a' /opt/mattermost/config/config.json)" = 'mattermost:mattermost 640'
 runuser -u mattermost -- touch /opt/mattermost/data/.tkl-v19-write-test
 runuser -u mattermost -- rm /opt/mattermost/data/.tkl-v19-write-test
 
