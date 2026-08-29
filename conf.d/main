@@ -8,7 +8,8 @@ ADMIN_PASS=TurnkeyLinux1!
 ADMIN_EMAIL=admin@example.com
 DB_NAME=mattermost
 DB_PASS=$(mcookie)
-SRC=(/usr/local/src/mattermost-team-*-linux-amd64.tar.gz)
+VERSION=11.8.3
+SRC=/usr/local/src/mattermost-team-${VERSION}-linux-amd64.tar.gz
 
 INSTALL_DIR=/opt/mattermost
 CONF=$INSTALL_DIR/config/config.json
@@ -23,12 +24,24 @@ psql postgres -c "CREATE USER $USER WITH PASSWORD '$DB_PASS';"
 psql postgres -c "ALTER DATABASE $DB_NAME OWNER TO $USER;"
 psql postgres -c "GRANT USAGE, CREATE ON SCHEMA PUBLIC TO $USER;"
 
-tar -zxf "${SRC[*]}" -C "$(dirname $INSTALL_DIR)"
-rm -f "${SRC[*]}"
+tar -zxf "$SRC" -C "$(dirname $INSTALL_DIR)" \
+    --no-same-owner --no-same-permissions
+rm -f "$SRC"
 mkdir -p $INSTALL_DIR/data
 useradd -r $USER -U
-chown -R $USER:$USER $INSTALL_DIR
-chmod -R g+w $INSTALL_DIR
+chown -R root:root $INSTALL_DIR
+chmod -R go-w $INSTALL_DIR
+for runtime_dir in data logs plugins client/plugins; do
+    install -d -o $USER -g $USER -m 0750 "$INSTALL_DIR/$runtime_dir"
+done
+chown -R $USER:$USER \
+    $INSTALL_DIR/data \
+    $INSTALL_DIR/logs \
+    $INSTALL_DIR/plugins \
+    $INSTALL_DIR/client/plugins
+chown root:$USER $INSTALL_DIR/config $CONF
+chmod 0750 $INSTALL_DIR/config
+chmod 0640 $CONF
 
 # enable services
 systemctl enable mattermost

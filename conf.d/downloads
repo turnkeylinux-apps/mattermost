@@ -1,15 +1,17 @@
-#!/bin/bash -ex
+#!/bin/bash -eux
 
 dl() {
-    [ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
-    cd $2; curl -L -f -O $PROXY $1; cd -
+    local proxy_args=()
+    [ -n "${FAB_HTTP_PROXY:-}" ] && proxy_args=(--proxy "$FAB_HTTP_PROXY")
+    cd "$2"
+    curl --proto '=https' --tlsv1.2 -L -f -O "${proxy_args[@]}" "$1"
+    cd -
 }
 
-
-LATEST_URL=https://github.com/mattermost/mattermost-server/releases/latest
-LATEST_VER=$(curl -Ls -o /dev/null -w %{url_effective} $LATEST_URL)
-VERSION=$(echo $LATEST_VER | sed 's|^.*/tag/v||')
-
+VERSION=11.8.3
+SHA256=5c864ac5fc83f95f94d2c04a7f40eb9248e6118d84ec916f3e6290768e488aa9
 URL=https://releases.mattermost.com/${VERSION}/mattermost-team-${VERSION}-linux-amd64.tar.gz
 
-dl $URL /usr/local/src
+dl "$URL" /usr/local/src
+echo "$SHA256  /usr/local/src/mattermost-team-${VERSION}-linux-amd64.tar.gz" \
+    | sha256sum --check --strict
