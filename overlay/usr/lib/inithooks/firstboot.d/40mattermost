@@ -7,3 +7,8 @@
 printf '%s\n' "$APP_PASS" | \
     $INITHOOKS_PATH/bin/mattermost.py --pass-stdin \
         --email="$APP_EMAIL" --domain="$APP_DOMAIN"
+
+# Nginx may have attempted its initial start before the firstboot TLS
+# certificate existed. Restart it now that certificate generation and the
+# application configuration are complete.
+systemctl restart nginx.service
